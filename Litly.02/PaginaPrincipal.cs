@@ -158,7 +158,7 @@ namespace Litly._02
                 // Lógica para abrir página de utilizador
                 string nomeUtilizador = itemSelecionado.Substring("Utilizador: ".Length).Split('(')[0].Trim();
                 // Chama uma função que abre o perfil do utilizador (crie ou redirecione para um formulário)
-                AbrirPerfilUtilizador(nomeUtilizador);
+                //AbrirPerfilUtilizador(nomeUtilizador);
             }
             else if (itemSelecionado.StartsWith("Livro: "))
             {
