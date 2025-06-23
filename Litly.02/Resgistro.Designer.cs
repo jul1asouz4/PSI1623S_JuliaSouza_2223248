@@ -43,7 +43,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.Cornsilk;
+            panel1.BackColor = SystemColors.Info;
             panel1.Controls.Add(textNome);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(textSenha);

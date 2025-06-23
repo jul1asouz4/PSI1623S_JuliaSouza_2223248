@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,6 +15,17 @@ namespace Litly._02
 {
     public partial class Login : Form
     {
+
+        private int idUtilizadorLogadoParaLogin;
+
+        public Login(int idLogado)
+        {
+            InitializeComponent();
+            idUtilizadorLogadoParaLogin = idLogado;
+
+
+        }
+
         public Login()
         {
             InitializeComponent();
@@ -22,7 +33,6 @@ namespace Litly._02
 
         private void button1_Click(object sender, EventArgs e)
         {
-
             string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
 
             string email = textEmail.Text.Trim();
@@ -34,85 +44,68 @@ namespace Litly._02
                 return;
             }
 
-
-            using (SqlConnection conn = new SqlConnection(connString))
+            using (Microsoft.Data.SqlClient.SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
             {
-
                 try
                 {
-
                     conn.Open();
 
-                   // Sessao.IdUtilizador = reader.GetInt32(0);
-                    string query = "SELECT COUNT(*) FROM Utilizadores WHERE Email = @Email AND PalavraPasse = @PalavraPasse";
-                    SqlCommand cmd = new SqlCommand(query, conn);
+                    string query = "SELECT IdUtilizador, Nome FROM Utilizadores WHERE Email = @Email AND PalavraPasse = @PalavraPasse";
+
+                    Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@Email", email);
                     cmd.Parameters.AddWithValue("@PalavraPasse", senha);
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    Microsoft.Data.SqlClient.SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())
                     {
-                        Sessao.IdUtilizador = reader.GetInt32(0); // <-- muito importante!
+                        Sessao.IdUtilizador = reader.GetInt32(reader.GetOrdinal("IdUtilizador"));
+                        Sessao.NomeUtilizador = reader["Nome"].ToString();
+
                         reader.Close();
 
-
                         MessageBox.Show("Login realizado com sucesso!", "Bem-vindo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         this.Hide();
-                        PaginaPrincipal principal = new PaginaPrincipal();
-                        principal.Show();                            // ...
-                    }else
-                    {
-                        reader.Close(); // <-- também fecha aqui
-                        MessageBox.Show("Email ou senha incorretos!", "Erro de login", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-
-
-                   /* int count = (int)cmd.ExecuteScalar();
-
-                    if (count > 0)
-                    {
-                        MessageBox.Show("Login realizado com sucesso!", "Bem-vindo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        this.Hide();
-                        PaginaPrincipal principal = new PaginaPrincipal();
+                        PaginaPrincipal principal = new PaginaPrincipal(Sessao.IdUtilizador);
                         principal.Show();
-
                     }
                     else
                     {
+                        reader.Close();
                         MessageBox.Show("Email ou senha incorretos!", "Erro de login", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }*/
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Erro ao conectar com o banco: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+                    MessageBox.Show("Erro ao tentar conectar ao banco de dados:\\n" + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
-
-
             }
-
-
         }
+
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Resgistro resgisto = new Resgistro();
             resgisto.Show();
-            this.Hide();
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             Resgistro resgisto = new Resgistro();
             resgisto.Show();
-            this.Hide();
+          
         }
 
         private void linkLabel1_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            
+
+        }
+
+        private void Login_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -33,6 +33,7 @@
             bibliotecaBindingSource1 = new BindingSource(components);
             bibliotecaBindingSource = new BindingSource(components);
             buttonAdicionar = new Button();
+            btnVoltar = new Button();
             ((System.ComponentModel.ISupportInitialize)bibliotecaBindingSource1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)bibliotecaBindingSource).BeginInit();
             SuspendLayout();
@@ -57,13 +58,23 @@
             // 
             // buttonAdicionar
             // 
-            buttonAdicionar.Location = new Point(564, 392);
+            buttonAdicionar.Location = new Point(522, 398);
             buttonAdicionar.Name = "buttonAdicionar";
-            buttonAdicionar.Size = new Size(115, 34);
+            buttonAdicionar.Size = new Size(157, 22);
             buttonAdicionar.TabIndex = 1;
             buttonAdicionar.Text = "Adicionar livros";
             buttonAdicionar.UseVisualStyleBackColor = true;
             buttonAdicionar.Click += buttonAdicionar_Click;
+            // 
+            // btnVoltar
+            // 
+            btnVoltar.Location = new Point(122, 398);
+            btnVoltar.Name = "btnVoltar";
+            btnVoltar.Size = new Size(157, 22);
+            btnVoltar.TabIndex = 2;
+            btnVoltar.Text = "Voltar a pagina principal\r\n";
+            btnVoltar.UseVisualStyleBackColor = true;
+            btnVoltar.Click += btnVoltar_Click;
             // 
             // Biblioteca
             // 
@@ -71,6 +82,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Info;
             ClientSize = new Size(835, 471);
+            Controls.Add(btnVoltar);
             Controls.Add(buttonAdicionar);
             Controls.Add(listBoxLivros);
             Name = "Biblioteca";
@@ -87,5 +99,6 @@
         private Button buttonAdicionar;
         private BindingSource bibliotecaBindingSource;
         private BindingSource bibliotecaBindingSource1;
+        private Button btnVoltar;
     }
 }

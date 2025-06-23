@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,9 +15,12 @@ namespace Litly._02
 {
     public partial class Resgistro : Form
     {
+       
+        
         public Resgistro()
         {
             InitializeComponent();
+            
         }
 
         private void Resgistro_Load(object sender, EventArgs e)
@@ -42,7 +45,7 @@ namespace Litly._02
 
             string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (Microsoft.Data.SqlClient.SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
             {
                 try
                 {
@@ -50,7 +53,7 @@ namespace Litly._02
 
 
                     string checkQuery = "SELECT COUNT(*) FROM Utilizadores WHERE email = @Email";
-                    using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                    using (Microsoft.Data.SqlClient.SqlCommand checkCmd = new Microsoft.Data.SqlClient.SqlCommand(checkQuery, conn))
                     {
                         checkCmd.Parameters.AddWithValue("@Email", email);
                         int count = (int)checkCmd.ExecuteScalar();
@@ -64,7 +67,7 @@ namespace Litly._02
 
                     // Insere novo utilizador
                     string insertQuery = "INSERT INTO Utilizadores (Nome, Email, PalavraPasse) VALUES (@Nome, @Email, @PalavraPasse)";
-                    SqlCommand insertCmd = new SqlCommand(insertQuery, conn);
+                    Microsoft.Data.SqlClient.SqlCommand insertCmd = new Microsoft.Data.SqlClient.SqlCommand(insertQuery, conn);
                     insertCmd.Parameters.AddWithValue("@Nome", nome);
                     insertCmd.Parameters.AddWithValue("@Email", email);
                     insertCmd.Parameters.AddWithValue("@PalavraPasse", senha);
@@ -73,11 +76,25 @@ namespace Litly._02
 
                     if (result > 0)
                     {
+                        // Agora, obtenha o ID do utilizador recém-criado
+                        // Método SCOPE_IDENTITY() é recomendado para obter o último ID gerado na sessão atual
+                        string selectIdQuery = "SELECT SCOPE_IDENTITY()";
+                        Microsoft.Data.SqlClient.SqlCommand selectIdCmd = new Microsoft.Data.SqlClient.SqlCommand(selectIdQuery, conn);
+                        int novoIdUtilizador = Convert.ToInt32(selectIdCmd.ExecuteScalar());
+
                         MessageBox.Show("Registo concluído com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         this.Hide();
-                        PaginaPrincipal principalRe = new PaginaPrincipal();
+
+                        // Define os dados na classe Sessao para o utilizador recém-registrado
+                        Sessao.IdUtilizador = novoIdUtilizador;
+                        Sessao.NomeUtilizador = nome;
+                        Sessao.EmailUtilizador = email;
+                        Sessao.ImagemPerfil = null; // Ou defina uma imagem padrão
+
+                        // Abre a PaginaPrincipal com o ID do NOVO utilizador
+                        PaginaPrincipal principalRe = new PaginaPrincipal(novoIdUtilizador);
                         principalRe.Show();
-                        this.Hide();
+                        // this.Close(); // Pode ser this.Close() em vez de this.Hide() se quiser fechar completamente
                     }
                     else
                     {
@@ -89,6 +106,26 @@ namespace Litly._02
                     MessageBox.Show("Erro: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private int ObterIdNovoUtilizador(string email)
+        {
+            string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
+            using (Microsoft.Data.SqlClient.SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
+            {
+                conn.Open();
+                string query = "SELECT IdUtilizador FROM Utilizadores WHERE Email = @Email";
+                using (Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+            return -1; // Ou lance uma exceção, ou retorne 0
         }
 
         private void button2_Click(object sender, EventArgs e)

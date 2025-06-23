@@ -36,13 +36,15 @@
             txtAutor = new TextBox();
             IblData = new Label();
             txtData = new TextBox();
-            button1 = new Button();
+            btnPublicar = new Button();
             label5 = new Label();
+            panel1 = new Panel();
             SuspendLayout();
             // 
             // IblTitulo
             // 
             IblTitulo.AutoSize = true;
+            IblTitulo.BackColor = Color.Cornsilk;
             IblTitulo.Location = new Point(279, 97);
             IblTitulo.Name = "IblTitulo";
             IblTitulo.Size = new Size(38, 15);
@@ -60,6 +62,7 @@
             // IblConteudo
             // 
             IblConteudo.AutoSize = true;
+            IblConteudo.BackColor = Color.Cornsilk;
             IblConteudo.Location = new Point(279, 154);
             IblConteudo.Name = "IblConteudo";
             IblConteudo.Size = new Size(60, 15);
@@ -79,6 +82,7 @@
             // IblAutor
             // 
             IblAutor.AutoSize = true;
+            IblAutor.BackColor = Color.Cornsilk;
             IblAutor.Location = new Point(279, 211);
             IblAutor.Name = "IblAutor";
             IblAutor.Size = new Size(37, 15);
@@ -96,6 +100,7 @@
             // IblData
             // 
             IblData.AutoSize = true;
+            IblData.BackColor = Color.Cornsilk;
             IblData.Location = new Point(279, 268);
             IblData.Name = "IblData";
             IblData.Size = new Size(90, 15);
@@ -110,24 +115,34 @@
             txtData.Size = new Size(100, 23);
             txtData.TabIndex = 7;
             // 
-            // button1
+            // btnPublicar
             // 
-            button1.Location = new Point(296, 358);
-            button1.Name = "button1";
-            button1.Size = new Size(156, 46);
-            button1.TabIndex = 8;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
+            btnPublicar.Location = new Point(296, 358);
+            btnPublicar.Name = "btnPublicar";
+            btnPublicar.Size = new Size(156, 46);
+            btnPublicar.TabIndex = 8;
+            btnPublicar.Text = "Publicar";
+            btnPublicar.UseVisualStyleBackColor = true;
+            btnPublicar.Click += btnPublicar_Click;
             // 
             // label5
             // 
             label5.AutoSize = true;
+            label5.BackColor = Color.Cornsilk;
             label5.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(279, 41);
             label5.Name = "label5";
             label5.Size = new Size(202, 25);
             label5.TabIndex = 9;
             label5.Text = "Detalhes da Postagem";
+            // 
+            // panel1
+            // 
+            panel1.BackColor = SystemColors.Info;
+            panel1.Location = new Point(259, 28);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(250, 396);
+            panel1.TabIndex = 10;
             // 
             // PaginaPostagem
             // 
@@ -136,7 +151,7 @@
             BackColor = Color.LightSteelBlue;
             ClientSize = new Size(800, 450);
             Controls.Add(label5);
-            Controls.Add(button1);
+            Controls.Add(btnPublicar);
             Controls.Add(txtData);
             Controls.Add(IblData);
             Controls.Add(txtAutor);
@@ -145,6 +160,7 @@
             Controls.Add(IblConteudo);
             Controls.Add(txtTitulo);
             Controls.Add(IblTitulo);
+            Controls.Add(panel1);
             Name = "PaginaPostagem";
             Text = "PaginaPostagem";
             Load += PaginaPostagem_Load;
@@ -162,7 +178,8 @@
         private TextBox txtAutor;
         private Label IblData;
         private TextBox txtData;
-        private Button button1;
+        private Button btnPublicar;
         private Label label5;
+        private Panel panel1;
     }
 }

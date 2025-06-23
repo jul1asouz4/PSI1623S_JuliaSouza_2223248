@@ -31,8 +31,6 @@
             pictureBox1 = new PictureBox();
             pictureBox2 = new PictureBox();
             pictureBox3 = new PictureBox();
-            pictureBox4 = new PictureBox();
-            pictureBox5 = new PictureBox();
             label1 = new Label();
             label2 = new Label();
             pictureBox6 = new PictureBox();
@@ -41,9 +39,6 @@
             label4 = new Label();
             label5 = new Label();
             label6 = new Label();
-            pictureBox8 = new PictureBox();
-            label7 = new Label();
-            label8 = new Label();
             buttonPost = new Button();
             buttonHome = new Button();
             buttonBiblioteca = new Button();
@@ -51,6 +46,7 @@
             buttonPerfil = new Button();
             button1 = new Button();
             panel1 = new Panel();
+            button2 = new Button();
             label11 = new Label();
             label10 = new Label();
             label9 = new Label();
@@ -60,15 +56,20 @@
             label13 = new Label();
             cmbTipoBusca = new ComboBox();
             listResultados = new ListBox();
+            label8 = new Label();
+            label7 = new Label();
+            pictureBox8 = new PictureBox();
+            pictureBox4 = new PictureBox();
+            pictureBox5 = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox7).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox8).BeginInit();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox8).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
@@ -100,26 +101,6 @@
             pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox3.TabIndex = 5;
             pictureBox3.TabStop = false;
-            // 
-            // pictureBox4
-            // 
-            pictureBox4.Image = Properties.Resources.e34c7277aab277e441777fc89b01519d;
-            pictureBox4.Location = new Point(888, 229);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(119, 196);
-            pictureBox4.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox4.TabIndex = 6;
-            pictureBox4.TabStop = false;
-            // 
-            // pictureBox5
-            // 
-            pictureBox5.Image = Properties.Resources.efc6ddc07157be5338531fca3813bc6e;
-            pictureBox5.Location = new Point(1092, 229);
-            pictureBox5.Name = "pictureBox5";
-            pictureBox5.Size = new Size(119, 196);
-            pictureBox5.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox5.TabIndex = 7;
-            pictureBox5.TabStop = false;
             // 
             // label1
             // 
@@ -184,49 +165,22 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(266, 733);
+            label5.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            label5.Location = new Point(266, 722);
             label5.Name = "label5";
-            label5.Size = new Size(38, 15);
+            label5.Size = new Size(211, 21);
             label5.TabIndex = 14;
-            label5.Text = "label5";
+            label5.Text = "Publicação de demostração";
             // 
             // label6
             // 
             label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
             label6.Location = new Point(644, 733);
             label6.Name = "label6";
-            label6.Size = new Size(38, 15);
+            label6.Size = new Size(211, 21);
             label6.TabIndex = 15;
-            label6.Text = "label6";
-            // 
-            // pictureBox8
-            // 
-            pictureBox8.Image = Properties.Resources.c26e33c90ec137102f1230525b64c4f9;
-            pictureBox8.Location = new Point(1011, 559);
-            pictureBox8.Name = "pictureBox8";
-            pictureBox8.Size = new Size(301, 130);
-            pictureBox8.TabIndex = 16;
-            pictureBox8.TabStop = false;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(1011, 701);
-            label7.Name = "label7";
-            label7.Size = new Size(166, 21);
-            label7.TabIndex = 17;
-            label7.Text = "Melhores livros 2025.";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label8.Location = new Point(1041, 728);
-            label8.Name = "label8";
-            label8.Size = new Size(166, 21);
-            label8.TabIndex = 18;
-            label8.Text = "Melhores livros 2025.";
+            label6.Text = "Publicação de demostração";
             // 
             // buttonPost
             // 
@@ -297,6 +251,7 @@
             buttonPerfil.Text = "Perfil";
             buttonPerfil.TextImageRelation = TextImageRelation.ImageBeforeText;
             buttonPerfil.UseVisualStyleBackColor = true;
+            buttonPerfil.Click += buttonPerfil_Click;
             // 
             // button1
             // 
@@ -312,6 +267,7 @@
             // panel1
             // 
             panel1.BackColor = Color.LightSteelBlue;
+            panel1.Controls.Add(button2);
             panel1.Controls.Add(label11);
             panel1.Controls.Add(label10);
             panel1.Controls.Add(label9);
@@ -324,8 +280,23 @@
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(212, 814);
+            panel1.Size = new Size(212, 796);
             panel1.TabIndex = 20;
+            // 
+            // button2
+            // 
+            button2.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold);
+            button2.Image = Properties.Resources.high_five__1_;
+            button2.ImageAlign = ContentAlignment.MiddleLeft;
+            button2.Location = new Point(13, 440);
+            button2.Margin = new Padding(3, 2, 3, 2);
+            button2.Name = "button2";
+            button2.Size = new Size(159, 35);
+            button2.TabIndex = 27;
+            button2.Text = "Amizades";
+            button2.TextImageRelation = TextImageRelation.ImageBeforeText;
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // label11
             // 
@@ -414,12 +385,61 @@
             listResultados.TabIndex = 26;
             listResultados.SelectedIndexChanged += listResultados_SelectedIndexChanged;
             // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label8.Location = new Point(1023, 722);
+            label8.Name = "label8";
+            label8.Size = new Size(211, 21);
+            label8.TabIndex = 18;
+            label8.Text = "Publicação de demostração";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.Location = new Point(1011, 701);
+            label7.Name = "label7";
+            label7.Size = new Size(166, 21);
+            label7.TabIndex = 17;
+            label7.Text = "Melhores livros 2025.";
+            // 
+            // pictureBox8
+            // 
+            pictureBox8.Image = Properties.Resources.c26e33c90ec137102f1230525b64c4f9;
+            pictureBox8.Location = new Point(1011, 559);
+            pictureBox8.Name = "pictureBox8";
+            pictureBox8.Size = new Size(301, 130);
+            pictureBox8.TabIndex = 16;
+            pictureBox8.TabStop = false;
+            // 
+            // pictureBox4
+            // 
+            pictureBox4.Image = Properties.Resources.e34c7277aab277e441777fc89b01519d;
+            pictureBox4.Location = new Point(888, 229);
+            pictureBox4.Name = "pictureBox4";
+            pictureBox4.Size = new Size(119, 196);
+            pictureBox4.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox4.TabIndex = 6;
+            pictureBox4.TabStop = false;
+            // 
+            // pictureBox5
+            // 
+            pictureBox5.Image = Properties.Resources.efc6ddc07157be5338531fca3813bc6e;
+            pictureBox5.Location = new Point(1092, 229);
+            pictureBox5.Name = "pictureBox5";
+            pictureBox5.Size = new Size(119, 196);
+            pictureBox5.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox5.TabIndex = 7;
+            pictureBox5.TabStop = false;
+            // 
             // PaginaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.Cornsilk;
-            ClientSize = new Size(1330, 814);
+            BackColor = SystemColors.Info;
+            ClientSize = new Size(1330, 796);
             Controls.Add(listResultados);
             Controls.Add(cmbTipoBusca);
             Controls.Add(label13);
@@ -449,13 +469,13 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox7).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox8).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox8).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -464,8 +484,6 @@
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
-        private PictureBox pictureBox4;
-        private PictureBox pictureBox5;
         private Label label1;
         private Label label2;
         private PictureBox pictureBox6;
@@ -474,9 +492,6 @@
         private Label label4;
         private Label label5;
         private Label label6;
-        private PictureBox pictureBox8;
-        private Label label7;
-        private Label label8;
         private Button buttonPost;
         private Button buttonHome;
         private Button buttonBiblioteca;
@@ -493,5 +508,11 @@
         private Label label13;
         private ComboBox cmbTipoBusca;
         private ListBox listResultados;
+        private Button button2;
+        private Label label8;
+        private Label label7;
+        private PictureBox pictureBox8;
+        private PictureBox pictureBox4;
+        private PictureBox pictureBox5;
     }
 }

@@ -2,21 +2,71 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Collections.Specialized.BitVector32;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Litly._02
 {
     public partial class PaginaPrincipal : Form
     {
-        public PaginaPrincipal()
+        private int idUtilizadorLogado;
+
+        public int IdUtilizadorLogado { get; set; }
+        public string NomeUtilizadorLogado { get; set; }
+        public string EmailUtilizadorLogado { get; set; }
+        public Image ImagemPerfilLogado { get; set; }
+
+        public PaginaPrincipal(int idLogado)
         {
             InitializeComponent();
+            idUtilizadorLogado = idLogado;
+
+            CarregarDadosUtilizadorLogado();
+
+
+        }
+
+        private void CarregarDadosUtilizadorLogado()
+        {
+            string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
+            using (SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
+            {
+                conn.Open();
+                Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand("SELECT Nome, Email, ImagemPerfil FROM Utilizadores WHERE IdUtilizador = @IdUtilizador", conn);
+                cmd.Parameters.AddWithValue("@IdUtilizador", idUtilizadorLogado);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    NomeUtilizadorLogado = reader["Nome"].ToString();
+                    EmailUtilizadorLogado = reader["Email"].ToString();
+
+                    // Supondo que ImagemPerfil está armazenada como varbinary no banco:
+                    if (reader["ImagemPerfil"] != DBNull.Value)
+                    {
+                        byte[] imgBytes = (byte[])reader["ImagemPerfil"];
+                        using (var ms = new MemoryStream(imgBytes))
+                        {
+                            Image imagem = Image.FromStream(ms); // Lê a imagem dos bytes
+                            ImagemPerfilLogado = imagem; // Salva na propriedade, se quiser usar depois
+                            //pictureBoxFotoPerfil.Image = imagem; // Mostra na UI
+
+                            /*Image imagem = ImagemPerfilLogado;
+                            pictureBoxFotoPerfil.Image = Image imagem; // Mostra na UI*/
+
+
+                        }
+                    }
+                }
+                reader.Close();
+            }
         }
 
 
@@ -33,8 +83,10 @@ namespace Litly._02
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e) //DM
         {
+            FormChat dm = new FormChat(idUtilizadorLogado);
+            dm.Show();
 
         }
 
@@ -45,23 +97,21 @@ namespace Litly._02
 
         private void button1_Click(object sender, EventArgs e)
         {
-            PaginaPrincipal principal = new PaginaPrincipal();
+            PaginaPrincipal principal = new PaginaPrincipal(idUtilizadorLogado);
             principal.Show();
         }
 
         private void buttonBiblioteca_Click(object sender, EventArgs e)
         {
 
-            Biblioteca biblioteca = new Biblioteca();
+            Biblioteca biblioteca = new Biblioteca(idUtilizadorLogado);
             biblioteca.Show();
 
         }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            Form1 form1 = new Form1();
-            form1.Show();
-            this.Hide();
+            Application.Exit();
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e)
@@ -91,15 +141,11 @@ namespace Litly._02
                 return;
             }
 
-
-
-            //
-
             string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
-            using (SqlConnection conn = new SqlConnection(connString))
+            using (Microsoft.Data.SqlClient.SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand();
+                Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand();
                 cmd.Connection = conn;
                 switch (tipoBusca)
                 {
@@ -150,43 +196,147 @@ namespace Litly._02
 
         private void listResultados_SelectedIndexChanged(object sender, EventArgs e)
         {
+            this.listResultados.SelectedIndexChanged += new System.EventHandler(this.listResultados_SelectedIndexChanged);
+
+
             if (listResultados.SelectedItem == null)
                 return;
+
             string itemSelecionado = listResultados.SelectedItem.ToString();
-            if (itemSelecionado.StartsWith("Utilizador: "))
+            string tipoBusca = cmbTipoBusca.SelectedItem?.ToString();
+
+            if (tipoBusca == "Utilizadores" && itemSelecionado.StartsWith("👤 "))
             {
-                // Lógica para abrir página de utilizador
-                string nomeUtilizador = itemSelecionado.Substring("Utilizador: ".Length).Split('(')[0].Trim();
-                // Chama uma função que abre o perfil do utilizador (crie ou redirecione para um formulário)
-                //AbrirPerfilUtilizador(nomeUtilizador);
+                // Extrai nome e email
+                string[] partes = itemSelecionado.Substring(2).Split(" - ");
+                if (partes.Length >= 2)
+                {
+                    
+
+                    var perfil = new PerfilUtilizador(NomeUtilizadorLogado, EmailUtilizadorLogado, ImagemPerfilLogado, idUtilizadorLogado);
+                    perfil.Show();
+                }
             }
-            else if (itemSelecionado.StartsWith("Livro: "))
+            else if (tipoBusca == "Livros" && itemSelecionado.StartsWith("📚 "))
             {
-                string tituloLivro = itemSelecionado.Substring("Livro: ".Length).Split('-')[0].Trim();
-                AbrirDetalhesLivro(tituloLivro);
+                string[] partes = itemSelecionado.Substring(2).Split(" - ");
+                if (partes.Length >= 1)
+                {
+                    string tituloLivro = partes[0].Trim();
+                    AbrirDetalhesLivro(tituloLivro);
+                }
             }
-            else if (itemSelecionado.StartsWith("Postagem: "))
+            else if (tipoBusca == "Postagens" && itemSelecionado.StartsWith("📝 "))
             {
-                string tituloPostagem = itemSelecionado.Substring("Postagem: ".Length).Trim();
-                AbrirPostagem(tituloPostagem);
+                string[] partes = itemSelecionado.Substring(2).Split(" - ");
+                if (partes.Length >= 1)
+                {
+                    string tituloPostagem = partes[0].Trim();
+                    AbrirPostagem(tituloPostagem);
+                }
+
             }
+
+
         }
 
-        private void AbrirPerfilUtilizador(string nome, string email, string bio)
+
+
+        private string ObterBioDoUtilizador(string email)
+        {
+            string bio = "";
+            string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("SELECT Bio FROM Utilizadores WHERE Email = @Email", conn);
+                cmd.Parameters.AddWithValue("@Email", email);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    bio = reader["Bio"].ToString();
+                }
+                reader.Close();
+            }
+
+            return bio;
+        }
+
+        private void AbrirPerfilUtilizador()
         {
             // Abre um novo formulário passando o nome (ou faz uma pesquisa detalhada no banco)
-            var perfil = new PerfilUtilizador(nome, email, bio);
+            var perfil = new PerfilUtilizador(NomeUtilizadorLogado, EmailUtilizadorLogado, ImagemPerfilLogado, idUtilizadorLogado);
             perfil.Show();
         }
         private void AbrirDetalhesLivro(string titulo)
         {
-            var detalhesLivro = new DetalhesLivros(titulo);
-            detalhesLivro.Show();
+            using (SqlConnection conn = new SqlConnection("Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;"))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Livros WHERE Titulo = @Titulo", conn);
+                cmd.Parameters.AddWithValue("@Titulo", titulo);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    string tituloBD = reader["Titulo"].ToString();
+                    string autor = reader["Autor"].ToString();
+                    //string genero = reader["Genero"].ToString();
+                    string sinopse = reader["Sinopse"].ToString();
+
+                    var detalhesLivro = new DetalhesLivros(titulo, autor, sinopse);
+                    detalhesLivro.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Livro não encontrado no banco de dados.");
+                }
+                reader.Close();
+            }
         }
         private void AbrirPostagem(string titulo)
         {
-            var postagem = new PaginaPostagem(titulo);
-            postagem.Show();
+            using (SqlConnection conn = new SqlConnection("Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;"))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("SELECT Titulo, Autor, Conteudo, DataCriacao FROM Postagens WHERE Titulo = @Titulo", conn);
+                cmd.Parameters.AddWithValue("@Titulo", titulo);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    string tituloBD = reader["Titulo"].ToString();
+                    string autorBD = reader["Autor"].ToString();
+                    string conteudoBD = reader["Conteudo"].ToString();
+                    string dataBD = Convert.ToDateTime(reader["DataCriacao"]).ToString("dd/MM/yyyy");
+
+                    var paginaPostagem = new PaginaPostagem(tituloBD, autorBD, conteudoBD, dataBD);
+                    paginaPostagem.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Postagem não encontrada no banco de dados.");
+                }
+                reader.Close();
+            }
+        }
+
+        private void buttonPerfil_Click(object sender, EventArgs e)
+        {
+
+            var perfil = new PerfilUtilizador(NomeUtilizadorLogado, EmailUtilizadorLogado, ImagemPerfilLogado, idUtilizadorLogado);
+            perfil.Show();
+            
+
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            frmAmigos amigos = new frmAmigos(idUtilizadorLogado);
+            amigos.Show();
         }
     }
 }

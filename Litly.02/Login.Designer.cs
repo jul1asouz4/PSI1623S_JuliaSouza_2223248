@@ -42,7 +42,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.Cornsilk;
+            panel1.BackColor = SystemColors.Info;
             panel1.Controls.Add(button2);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(textSenha);
@@ -140,6 +140,7 @@
             Controls.Add(panel1);
             Name = "Login";
             Text = "Login";
+            Load += Login_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

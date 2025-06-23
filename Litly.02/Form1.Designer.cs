@@ -33,6 +33,8 @@
             label2 = new Label();
             button1 = new Button();
             pictureBox1 = new PictureBox();
+            button2 = new Button();
+            panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -41,6 +43,7 @@
             panel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             panel1.BackColor = Color.LightSteelBlue;
             panel1.BorderStyle = BorderStyle.FixedSingle;
+            panel1.Controls.Add(button2);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
@@ -72,20 +75,30 @@
             // 
             button1.Location = new Point(293, 329);
             button1.Name = "button1";
-            button1.Size = new Size(330, 35);
+            button1.Size = new Size(330, 43);
             button1.TabIndex = 3;
-            button1.Text = "Comece a escrever";
+            button1.Text = "Comece a postar";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.Webp_net_resizeimage__2_;
-            pictureBox1.Location = new Point(769, 145);
+            pictureBox1.Location = new Point(763, 137);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(300, 300);
             pictureBox1.TabIndex = 5;
             pictureBox1.TabStop = false;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(23, 613);
+            button2.Name = "button2";
+            button2.Size = new Size(107, 30);
+            button2.TabIndex = 6;
+            button2.Text = "Fechar App";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // Form1
             // 
@@ -102,6 +115,8 @@
             Margin = new Padding(4);
             Name = "Form1";
             Text = "Litly";
+            Load += Form1_Load;
+            panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -115,5 +130,6 @@
         private Label label2;
         private Button button1;
         private PictureBox pictureBox1;
+        private Button button2;
     }
 }

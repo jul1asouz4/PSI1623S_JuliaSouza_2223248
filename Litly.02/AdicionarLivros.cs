@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,7 @@ namespace Litly._02
     public partial class AdicionarLivros : Form
     {
 
-        
+
 
         public AdicionarLivros()
         {
@@ -23,7 +23,7 @@ namespace Litly._02
 
         }
 
-        
+
 
         private void btnAdicionar_Click(object sender, EventArgs e)
         {
@@ -32,7 +32,7 @@ namespace Litly._02
             string capaUrl = txtCapaUrl.Text.Trim();
             string sinopse = txtSinopse.Text.Trim();
             DateTime dataPublicacao = dtpDataPublicacao.Value;
-            int idUtilizador = Sessao.IdUtilizador; 
+            int idUtilizador = Sessao.IdUtilizador;
 
 
             if (string.IsNullOrEmpty(titulo) || string.IsNullOrEmpty(autor))
@@ -45,14 +45,14 @@ namespace Litly._02
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (Microsoft.Data.SqlClient.SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
                 {
                     conn.Open();
 
 
                     string insertQuery = "INSERT INTO Livros (Titulo, Autor, CapaURL, Sinopse, DataPublicacao, IdUtilizador) " +
                                          "VALUES (@Titulo, @Autor, @CapaURL, @Sinopse, @DataPublicacao, @IdUtilizador)";
-                    SqlCommand cmd = new SqlCommand(insertQuery, conn);
+                    Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand(insertQuery, conn);
                     cmd.Parameters.AddWithValue("@Titulo", titulo);
                     cmd.Parameters.AddWithValue("@Autor", autor);
                     cmd.Parameters.AddWithValue("@CapaURL", capaUrl);
@@ -63,7 +63,7 @@ namespace Litly._02
                     if (rowsAffected > 0)
                     {
                         MessageBox.Show("Livro adicionado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        
+
                         foreach (Form form in Application.OpenForms)
                         {
                             if (form is Biblioteca biblioteca)
@@ -72,7 +72,7 @@ namespace Litly._02
                                 break;
                             }
                         }
-                        this.Close(); 
+                        this.Close();
                     }
                     else
                     {
@@ -84,6 +84,25 @@ namespace Litly._02
             {
                 MessageBox.Show("Erro: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void AdicionarLivros_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnVoltar_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+
+            // Cria uma nova instância da Biblioteca, passando o ID do utilizador logado
+            // que está armazenado na classe estática Sessao.
+            Biblioteca biblioteca = new Biblioteca(Sessao.IdUtilizador);
+            biblioteca.Show(); // Exibe a Biblioteca
+
+            // Fecha o formulário DetalhesLivros (ou o formulário onde este botão está)
+            // para liberar recursos.
+            this.Close();
         }
     }
 }

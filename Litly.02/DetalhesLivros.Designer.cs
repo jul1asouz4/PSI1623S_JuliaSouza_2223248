@@ -31,45 +31,85 @@
             lblTitulo = new Label();
             lblAutor = new Label();
             lblSinopse = new Label();
+            lblAno = new Label();
+            btnVoltar = new Button();
+            panel1 = new Panel();
             SuspendLayout();
             // 
             // lblTitulo
             // 
             lblTitulo.AutoSize = true;
+            lblTitulo.BackColor = Color.Cornsilk;
             lblTitulo.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitulo.Location = new Point(299, 54);
+            lblTitulo.Location = new Point(326, 113);
             lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new Size(140, 25);
+            lblTitulo.Size = new Size(175, 32);
             lblTitulo.TabIndex = 0;
             lblTitulo.Text = "Exemplo Titulo";
             // 
             // lblAutor
             // 
             lblAutor.AutoSize = true;
-            lblAutor.Location = new Point(352, 98);
+            lblAutor.BackColor = Color.Cornsilk;
+            lblAutor.Location = new Point(374, 169);
             lblAutor.Name = "lblAutor";
-            lblAutor.Size = new Size(37, 15);
+            lblAutor.Size = new Size(46, 20);
             lblAutor.TabIndex = 1;
             lblAutor.Text = "Autor";
             // 
             // lblSinopse
             // 
             lblSinopse.AutoSize = true;
-            lblSinopse.Location = new Point(198, 164);
+            lblSinopse.BackColor = Color.Cornsilk;
+            lblSinopse.Location = new Point(237, 268);
             lblSinopse.Name = "lblSinopse";
-            lblSinopse.Size = new Size(48, 15);
+            lblSinopse.Size = new Size(61, 20);
             lblSinopse.TabIndex = 2;
             lblSinopse.Text = "Sinopse";
             // 
+            // lblAno
+            // 
+            lblAno.AutoSize = true;
+            lblAno.BackColor = Color.Cornsilk;
+            lblAno.Location = new Point(237, 339);
+            lblAno.Name = "lblAno";
+            lblAno.Size = new Size(113, 20);
+            lblAno.TabIndex = 3;
+            lblAno.Text = "Ano publicação";
+            // 
+            // btnVoltar
+            // 
+            btnVoltar.Location = new Point(638, 512);
+            btnVoltar.Margin = new Padding(3, 4, 3, 4);
+            btnVoltar.Name = "btnVoltar";
+            btnVoltar.Size = new Size(181, 33);
+            btnVoltar.TabIndex = 4;
+            btnVoltar.Text = "Voltar";
+            btnVoltar.UseVisualStyleBackColor = true;
+            btnVoltar.Click += btnVoltar_Click;
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.Cornsilk;
+            panel1.Location = new Point(217, 81);
+            panel1.Margin = new Padding(3, 4, 3, 4);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(385, 405);
+            panel1.TabIndex = 5;
+            // 
             // DetalhesLivros
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSteelBlue;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(914, 600);
+            Controls.Add(btnVoltar);
+            Controls.Add(lblAno);
             Controls.Add(lblSinopse);
             Controls.Add(lblAutor);
             Controls.Add(lblTitulo);
+            Controls.Add(panel1);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "DetalhesLivros";
             Text = "DetalhesLivros";
             Load += DetalhesLivros_Load;
@@ -82,5 +122,8 @@
         private Label lblTitulo;
         private Label lblAutor;
         private Label lblSinopse;
+        private Label lblAno;
+        private Button btnVoltar;
+        private Panel panel1;
     }
 }
