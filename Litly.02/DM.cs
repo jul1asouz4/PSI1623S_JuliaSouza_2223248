@@ -15,7 +15,7 @@ namespace Litly._02
 
         int idUtilizadorLogado;
         int idAmigoSelecionado;
-        //private int idAmigoSelecionado = -1;
+
 
         public FormChat(int idLogado)
         {
@@ -26,6 +26,26 @@ namespace Litly._02
 
         }
 
+        // NOVO CONSTRUTOR para iniciar o chat com um amigo específico
+        public FormChat(int idLogado, int idAmigoParaChat)
+        {
+            InitializeComponent();
+            idUtilizadorLogado = idLogado;
+            idAmigoSelecionado = idAmigoParaChat; // Define o amigo selecionado
+
+            CarregarListaAmigos(); // Carrega a lista de amigos na barra lateral (listChats)
+
+            // Tenta selecionar o amigo na listChats se ele existir, para que o chat correto esteja visível
+            foreach (ItemAmigo item in listChats.Items)
+            {
+                if (item.Id == idAmigoParaChat)
+                {
+                    listChats.SelectedItem = item;
+                    break;
+                }
+            }
+            CarregarMensagens();   // Carrega as mensagens para este amigo específico
+        }
         private class ItemAmigo
         {
             public string Nome { get; set; }
@@ -67,12 +87,12 @@ namespace Litly._02
 
                         using (var reader = cmd.ExecuteReader())
                         {
-                            listChats.Items.Clear(); // Limpa a lista antes de adicionar novos itens
+                            //listChats.Items.Clear(); // Limpa a lista antes de adicionar novos itens
 
                             if (!reader.HasRows)
                             {
                                 // Opcional: Mensagem se não houver amigos
-                                MessageBox.Show("Você não tem amigos aceitos para conversar.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                //MessageBox.Show("Você não tem amigos aceitos para conversar.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
 
                             while (reader.Read())
@@ -94,11 +114,6 @@ namespace Litly._02
         }
 
 
-        private void InicializarChat(int idAmigo)
-        {
-            // Aqui você pode carregar mensagens do banco de dados e exibir no chat
-            MessageBox.Show($"Chat iniciado com o amigo ID: {idAmigo}");
-        }
 
         private void GuardarMensagensNoBanco(int idDestinatario, string conteudo)
         {
@@ -124,7 +139,7 @@ namespace Litly._02
 
         private void EnviarMensagem(string mensagem, bool doUsuario)
         {
-            if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(txtMensagem.Text))
+            /*if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(txtMensagem.Text))
             {
                 MessageBox.Show("Selecione um amigo e escreva uma mensagem.");
                 return;
@@ -149,11 +164,24 @@ namespace Litly._02
             }
 
             txtMensagem.Clear();
-            CarregarMensagens();
+            CarregarMensagens();*/
+
+            if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(txtMensagem.Text))
+            {
+                MessageBox.Show("Selecione um amigo e escreva uma mensagem.");
+                return;
+            }
+
+            // A lógica de guardar mensagem já está em GuardarMensagensNoBanco,
+            // então não precisamos duplicar a query aqui.
+            GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text);
+
+            txtMensagem.Clear();
+            CarregarMensagens(); // Recarrega as mensagens para mostrar a nova
         }
 
 
-        private void CarregarMensagens()
+        private void CarregarMensagens() // Este método carrega as mensagens para o chat *selecionado*
         {
             if (idAmigoSelecionado <= 0)
                 return;
@@ -166,11 +194,11 @@ namespace Litly._02
             {
                 con.Open();
                 string query = @"
-            SELECT IdRemetente, Conteudo, DataHora
+            SELECT IdRemetente, Conteudo, DataEnvio -- Alterado de DataHora para DataEnvio
             FROM Mensagens
             WHERE (IdRemetente = @id1 AND IdDestinatario = @id2)
                OR (IdRemetente = @id2 AND IdDestinatario = @id1)
-            ORDER BY DataEnvio ASC"; //estava DataHora, mas o correto é DataEnvio
+            ORDER BY DataEnvio ASC";
 
                 using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(query, con))
                 {
@@ -213,7 +241,7 @@ namespace Litly._02
 
 
             EnviarMensagem(txtMensagem.Text, true);
-            GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text);
+            //GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text);
 
         }
 
@@ -230,7 +258,7 @@ namespace Litly._02
 
         private void CarregarMensagens(int idAmigo)
         {
-            listChats.Items.Clear();
+            //listChats.Items.Clear();
 
             string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
 
@@ -238,7 +266,7 @@ namespace Litly._02
             {
                 con.Open();
 
-                MessageBox.Show("ID do utilizador logado: " + idUtilizadorLogado);
+                //MessageBox.Show("ID do utilizador logado: " + idUtilizadorLogado);
 
 
                 string sql = @"
@@ -258,14 +286,29 @@ namespace Litly._02
                     {
                         while (reader.Read())
                         {
-                            listChats.Items.Add(new ItemAmigo
+                            // Adiciona apenas se ainda não estiver na lista para evitar duplicados
+                            // O ItemAmigo já está definido na classe.
+                            bool found = false;
+                            foreach (ItemAmigo existingItem in listChats.Items)
                             {
-                                Nome = reader["Nome"].ToString(),
-                                Id = (int)reader["IdUtilizador"]
-                            });
+                                if (existingItem.Id == (int)reader["IdUtilizador"])
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                listChats.Items.Add(new ItemAmigo
+                                {
+                                    Nome = reader["Nome"].ToString(),
+                                    Id = (int)reader["IdUtilizador"]
+                                });
+                            }
                         }
                     }
                 }
+
             }
         }
 
@@ -274,8 +317,7 @@ namespace Litly._02
         {
             if (listChats.SelectedItem is ItemAmigo amigo)
             {
-                idAmigoSelecionado = amigo.Id;
-                CarregarMensagens();
+                AbrirChatCom(amigo.Id); // Chama AbrirChatCom para carregar as mensagens do amigo selecionado
             }
         }
 
@@ -287,7 +329,7 @@ namespace Litly._02
             }
             else
             {
-                MessageBox.Show("Selecione um usuário para iniciar o chat.");
+                MessageBox.Show("Selecione um utilizador para iniciar o chat.");
             }
         }
 
@@ -303,11 +345,16 @@ namespace Litly._02
 
             string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
             string query = @"
-                SELECT DISTINCT u.IdUtilizador, u.Nome
-FROM Mensagens m
-JOIN Utilizadores u ON 
-    (u.IdUtilizador = m.IdRemetente AND m.IdDestinatario = @IdUtilizadorLogado)
- OR (u.IdUtilizador = m.IdDestinatario AND m.IdRemetente = @IdUtilizadorLogado)";
+            SELECT DISTINCT u.IdUtilizador, u.Nome
+            FROM Amizades a
+            JOIN Utilizadores u ON
+                u.IdUtilizador = CASE
+                                   WHEN a.IdSolicitante = @IdUtilizadorLogado THEN a.IdAceito
+                                   WHEN a.IdAceito = @IdUtilizadorLogado THEN a.IdSolicitante
+                                   ELSE NULL
+                               END
+            WHERE (a.IdSolicitante = @IdUtilizadorLogado OR a.IdAceito = @IdUtilizadorLogado)
+              AND a.Status = 'Aceite'";
 
 
             if (!string.IsNullOrWhiteSpace(filtro))
@@ -318,10 +365,10 @@ JOIN Utilizadores u ON
             using (Microsoft.Data.SqlClient.SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
             using (Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand(query, conn))
             {
-                cmd.Parameters.Add("@IdAtual", SqlDbType.Int).Value = idUtilizadorLogado;
+                cmd.Parameters.AddWithValue("@IdUtilizadorLogado", idUtilizadorLogado); // CORRIGIDO: Nome do parâmetro
                 if (!string.IsNullOrWhiteSpace(filtro))
                 {
-                    cmd.Parameters.Add("@Filtro", SqlDbType.NVarChar).Value = "%" + filtro + "%";
+                    cmd.Parameters.AddWithValue("@Filtro", "%" + filtro + "%");
                 }
 
                 conn.Open();
@@ -345,6 +392,8 @@ JOIN Utilizadores u ON
             if (string.IsNullOrWhiteSpace(txtPesquisarChat.Text))
             {
                 listSugestoesAmigos.Visible = false;
+                // Quando o texto de pesquisa é limpo, recarrega a lista de amigos aceites normal
+                CarregarListaAmigos();
                 return;
             }
 
@@ -386,7 +435,7 @@ JOIN Utilizadores u ON
                 txtPesquisarChat.Text = amigo.Nome;
                 listSugestoesAmigos.Visible = false;
 
-                AbrirChatCom(amigo.Id); // Chama um método  para abrir o chat
+                AbrirChatCom(amigo.Id); // Abre o chat com o amigo selecionado da sugestão
             }
         }
 
@@ -427,10 +476,10 @@ JOIN Utilizadores u ON
                             }
                             else
                             {
-                                picPerfil.Image = null;
+                                picPerfil.Image = null; // Garante que a imagem é limpa se não houver no DB
                             }
 
-                            CarregarMensagens();
+                            CarregarMensagens(); // Recarrega as mensagens para o novo amigo selecionado
                         }
                     }
                 }
@@ -440,7 +489,7 @@ JOIN Utilizadores u ON
 
         private void btnSair_Click(object sender, EventArgs e)
         {
-            // Oculta o formulário DetalhesLivros atual
+
             this.Hide();
 
             // Cria uma nova instância da PaginaPrincipal, passando o ID do utilizador logado
@@ -448,20 +497,94 @@ JOIN Utilizadores u ON
             PaginaPrincipal principal = new PaginaPrincipal(Sessao.IdUtilizador);
             principal.Show(); // Exibe a PaginaPrincipal
 
-            // Fecha o formulário DetalhesLivros completamente para liberar recursos
+
             this.Close();
         }
 
         private void btnPedidos_Click(object sender, EventArgs e)
         {
-            frmAmigos amigos = new frmAmigos(idUtilizadorLogado);
-            amigos.Show();
-            this.Hide(); // Esconde o formulário atual
+            frmAmigos amigos = new frmAmigos(idUtilizadorLogado); // Cria uma nova instância de frmAmigos
+            amigos.Show(); // Exibe o formulário de amigos
+            this.Hide();
         }
 
         private void listChats_SelectedIndexChanged_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnVerPerfil_Click(object sender, EventArgs e)
+        {
+
+            if (idAmigoSelecionado > 0)
+            {
+                PerfilUtilizador perfilUtilizador = new PerfilUtilizador();
+                perfilUtilizador.Show();
+                this.Hide();
+            }
+            else
+            {
+                MessageBox.Show("Selecione um amigo para ver o perfil.");
+            }
+
+        }
+
+        private void btnVerPerfil_Click_1(object sender, EventArgs e)
+        {
+            // Verifica se um amigo está selecionado no chat
+            if (idAmigoSelecionado > 0)
+            {
+                string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
+                using (Microsoft.Data.SqlClient.SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
+                {
+                    try
+                    {
+                        conn.Open();
+                        // Seleciona os dados do perfil do amigo
+                        string sql = "SELECT Nome, Email, ImagemPerfil FROM Utilizadores WHERE IdUtilizador = @IdUtilizador";
+                        using (Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@IdUtilizador", idAmigoSelecionado);
+
+                            using (Microsoft.Data.SqlClient.SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    string nomeAmigo = reader["Nome"].ToString();
+                                    string emailAmigo = reader["Email"].ToString();
+                                    Image imagemAmigo = null;
+
+                                    if (reader["ImagemPerfil"] != DBNull.Value)
+                                    {
+                                        byte[] imagemBytes = (byte[])reader["ImagemPerfil"];
+                                        using (var ms = new MemoryStream(imagemBytes))
+                                        {
+                                            imagemAmigo = Image.FromStream(ms);
+                                        }
+                                    }
+
+                                    // Cria e mostra o formulário PerfilUtilizador com os dados do amigo
+                                    PerfilUtilizador perfilAmigo = new PerfilUtilizador(nomeAmigo, emailAmigo, imagemAmigo, idAmigoSelecionado);
+                                    perfilAmigo.Show();
+                                    this.Hide(); // Esconde o formulário DM
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Dados do amigo não encontrados.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Erro ao carregar perfil do amigo: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecione um amigo na lista para ver o perfil.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 

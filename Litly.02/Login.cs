@@ -66,9 +66,10 @@ namespace Litly._02
                         reader.Close();
 
                         MessageBox.Show("Login realizado com sucesso!", "Bem-vindo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        this.Hide();
+                        
                         PaginaPrincipal principal = new PaginaPrincipal(Sessao.IdUtilizador);
                         principal.Show();
+                        this.Hide();
                     }
                     else
                     {

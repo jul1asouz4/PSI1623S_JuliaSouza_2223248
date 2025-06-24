@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            button2 = new Button();
             label1 = new Label();
             label2 = new Label();
             button1 = new Button();
             pictureBox1 = new PictureBox();
-            button2 = new Button();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -49,6 +49,16 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(162, 676);
             panel1.TabIndex = 0;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(23, 613);
+            button2.Name = "button2";
+            button2.Size = new Size(107, 30);
+            button2.TabIndex = 6;
+            button2.Text = "Fechar App";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // label1
             // 
@@ -90,22 +100,13 @@
             pictureBox1.TabIndex = 5;
             pictureBox1.TabStop = false;
             // 
-            // button2
-            // 
-            button2.Location = new Point(23, 613);
-            button2.Name = "button2";
-            button2.Size = new Size(107, 30);
-            button2.TabIndex = 6;
-            button2.Text = "Fechar App";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Info;
             ClientSize = new Size(1306, 676);
+            ControlBox = false;
             Controls.Add(pictureBox1);
             Controls.Add(button1);
             Controls.Add(label2);

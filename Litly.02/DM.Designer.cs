@@ -37,7 +37,6 @@
             txtPesquisarChat = new TextBox();
             panelMensagens = new Panel();
             panelPerfil = new Panel();
-            btnMaisOpcoes = new Button();
             btnVerPerfil = new Button();
             lblStatusPerfil = new Label();
             lblNomePerfil = new Label();
@@ -46,7 +45,6 @@
             txtMensagem = new TextBox();
             flowMensagens = new FlowLayoutPanel();
             lblNomeContato = new Label();
-            listBox1 = new ListBox();
             pnlMensagens.SuspendLayout();
             panelMensagens.SuspendLayout();
             panelPerfil.SuspendLayout();
@@ -73,10 +71,10 @@
             // 
             listChats.FormattingEnabled = true;
             listChats.ItemHeight = 15;
-            listChats.Location = new Point(22, 412);
+            listChats.Location = new Point(22, 307);
             listChats.Margin = new Padding(3, 2, 3, 2);
             listChats.Name = "listChats";
-            listChats.Size = new Size(151, 19);
+            listChats.Size = new Size(151, 154);
             listChats.TabIndex = 5;
             listChats.SelectedIndexChanged += listChats_SelectedIndexChanged_1;
             // 
@@ -97,7 +95,7 @@
             listSugestoesAmigos.Location = new Point(22, 82);
             listSugestoesAmigos.Margin = new Padding(3, 2, 3, 2);
             listSugestoesAmigos.Name = "listSugestoesAmigos";
-            listSugestoesAmigos.Size = new Size(151, 319);
+            listSugestoesAmigos.Size = new Size(151, 214);
             listSugestoesAmigos.TabIndex = 1;
             listSugestoesAmigos.SelectedIndexChanged += listSugestoesAmigos_SelectedIndexChanged;
             // 
@@ -146,7 +144,6 @@
             // panelPerfil
             // 
             panelPerfil.BackColor = Color.Cornsilk;
-            panelPerfil.Controls.Add(btnMaisOpcoes);
             panelPerfil.Controls.Add(btnVerPerfil);
             panelPerfil.Controls.Add(lblStatusPerfil);
             panelPerfil.Controls.Add(lblNomePerfil);
@@ -157,15 +154,6 @@
             panelPerfil.Size = new Size(298, 561);
             panelPerfil.TabIndex = 4;
             // 
-            // btnMaisOpcoes
-            // 
-            btnMaisOpcoes.Location = new Point(89, 324);
-            btnMaisOpcoes.Name = "btnMaisOpcoes";
-            btnMaisOpcoes.Size = new Size(118, 26);
-            btnMaisOpcoes.TabIndex = 4;
-            btnMaisOpcoes.Text = "Mais opções";
-            btnMaisOpcoes.UseVisualStyleBackColor = true;
-            // 
             // btnVerPerfil
             // 
             btnVerPerfil.Location = new Point(89, 279);
@@ -174,6 +162,7 @@
             btnVerPerfil.TabIndex = 3;
             btnVerPerfil.Text = "Ver perfil";
             btnVerPerfil.UseVisualStyleBackColor = true;
+            btnVerPerfil.Click += btnVerPerfil_Click_1;
             // 
             // lblStatusPerfil
             // 
@@ -230,7 +219,6 @@
             flowMensagens.AutoScroll = true;
             flowMensagens.BackColor = SystemColors.Info;
             flowMensagens.Controls.Add(lblNomeContato);
-            flowMensagens.Controls.Add(listBox1);
             flowMensagens.Dock = DockStyle.Fill;
             flowMensagens.Location = new Point(0, 0);
             flowMensagens.Name = "flowMensagens";
@@ -245,16 +233,6 @@
             lblNomeContato.Size = new Size(96, 15);
             lblNomeContato.TabIndex = 0;
             lblNomeContato.Text = "lblNomeContato";
-            // 
-            // listBox1
-            // 
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(105, 2);
-            listBox1.Margin = new Padding(3, 2, 3, 2);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(132, 79);
-            listBox1.TabIndex = 1;
             // 
             // FormChat
             // 
@@ -289,7 +267,6 @@
         private Button btnEnviar;
         private TextBox txtMensagem;
         private Panel panelPerfil;
-        private Button btnMaisOpcoes;
         private Button btnVerPerfil;
         private Label lblStatusPerfil;
         private Label lblNomePerfil;

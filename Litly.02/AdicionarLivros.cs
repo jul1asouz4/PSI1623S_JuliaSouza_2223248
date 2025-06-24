@@ -19,8 +19,6 @@ namespace Litly._02
         public AdicionarLivros()
         {
             InitializeComponent();
-
-
         }
 
 
@@ -32,7 +30,7 @@ namespace Litly._02
             string capaUrl = txtCapaUrl.Text.Trim();
             string sinopse = txtSinopse.Text.Trim();
             DateTime dataPublicacao = dtpDataPublicacao.Value;
-            int idUtilizador = Sessao.IdUtilizador;
+            
 
 
             if (string.IsNullOrEmpty(titulo) || string.IsNullOrEmpty(autor))
@@ -60,19 +58,45 @@ namespace Litly._02
                     cmd.Parameters.AddWithValue("@DataPublicacao", dataPublicacao);
                     cmd.Parameters.AddWithValue("@IdUtilizador", Sessao.IdUtilizador);
                     int rowsAffected = cmd.ExecuteNonQuery();
+
                     if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Livro adicionado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                        // Atualiza a ListBox da Biblioteca antes de perguntar ao utilizador
                         foreach (Form form in Application.OpenForms)
                         {
                             if (form is Biblioteca biblioteca)
                             {
-                                biblioteca.ListBoxLivros.Items.Add($"{titulo} - {autor}");
+                                // Chame o método CarregarLivrosDoUtilizador() para recarregar a lista completa,
+                                // garantindo que a lista está sempre atualizada.
+                                biblioteca.CarregarLivrosDoUtilizador();
                                 break;
                             }
                         }
-                        this.Close();
+
+                        // Pergunta ao utilizador se deseja adicionar outro livro
+                        DialogResult dialogResult = MessageBox.Show(
+                            "Livro adicionado com sucesso!\n\nDeseja adicionar outro livro?",
+                            "Sucesso",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question
+                        );
+
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            // Limpa os campos para adicionar outro livro
+                            txtTitulo.Clear();
+                            txtAutor.Clear();
+                            txtCapaUrl.Clear();
+                            txtSinopse.Clear();
+                            dtpDataPublicacao.Value = DateTime.Now; // Define a data para a data atual
+                            txtTitulo.Focus(); // Coloca o foco no primeiro campo
+                        }
+                        else
+                        {
+                            // Se o utilizador escolher 'Não', volta para a Biblioteca
+                            // Reutiliza a lógica do btnVoltar_Click
+                            VoltarParaBiblioteca();
+                        }
                     }
                     else
                     {
@@ -84,6 +108,29 @@ namespace Litly._02
             {
                 MessageBox.Show("Erro: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void VoltarParaBiblioteca()
+        {
+            this.Hide();
+
+            // Tenta encontrar uma instância existente da Biblioteca
+            Biblioteca bibliotecaForm = Application.OpenForms.OfType<Biblioteca>().FirstOrDefault();
+
+            if (bibliotecaForm != null)
+            {
+                // Se a Biblioteca já está aberta, apenas a mostra
+                bibliotecaForm.CarregarLivrosDoUtilizador(); // Garante que a lista está atualizada
+                bibliotecaForm.Show();
+            }
+            else
+            {
+                // Se não está aberta, cria uma nova instância
+                Biblioteca biblioteca = new Biblioteca(Sessao.IdUtilizador);
+                biblioteca.Show();
+            }
+
+            this.Close(); // Fecha o formulário AdicionarLivros
         }
 
         private void AdicionarLivros_Load(object sender, EventArgs e)

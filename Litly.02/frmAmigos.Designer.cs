@@ -151,6 +151,7 @@
             btnRemover.TabIndex = 10;
             btnRemover.Text = "Remover";
             btnRemover.UseVisualStyleBackColor = false;
+            btnRemover.Click += btnRemover_Click;
             // 
             // frmAmigos
             // 

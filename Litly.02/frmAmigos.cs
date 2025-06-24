@@ -17,32 +17,89 @@ namespace Litly._02
         {
             InitializeComponent();
             this.idUtilizadorLogado = idLogado;
-            CarregarAmigosAceitos();
+            CarregarAmigosAceitos(); // Carrega a lista de amigos aceitos
+            CarregarPedidos(); // Carrega a lista de pedidos pendentes
+        }
+
+        private class ItemAmigo
+        {
+            public string Nome { get; set; }
+            public int Id { get; set; }
+
+            public override string ToString()
+            {
+                return Nome;
+            }
         }
 
         private void button3_Click(object sender, EventArgs e) // Abrir chat com respetivos amigos.
         {
+            if (Amigos.SelectedItem != null)
+            {
+                if (Amigos.SelectedItem is ItemAmigo amigoSelecionado)
+                {
+                    this.Hide(); // Oculta o formulário atual de amigos
 
+                    // Cria uma nova instância do FormChat com o ID do utilizador logado
+                    // e o ID do amigo selecionado.
+                    FormChat chat = new FormChat(idUtilizadorLogado, amigoSelecionado.Id);
+                    chat.Show();
+
+                    this.Close(); // Fecha o formulário frmAmigos
+                }
+                else
+                {
+                    MessageBox.Show("O item selecionado não é um amigo válido. Reinicie o formulário.", "Erro de Seleção", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecione um amigo na lista para abrir o chat.", "Nenhum Amigo Selecionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void btnProcurar_Click(object sender, EventArgs e)
         {
-            string termo = textBox1.Text;
+            string termo = textBox1.Text.Trim(); // Usa Trim para remover espaços em branco
             utilizadores.Items.Clear();
+
+            if (string.IsNullOrWhiteSpace(termo))
+            {
+                MessageBox.Show("Digite um nome para procurar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
 
-            using (Microsoft.Data.SqlClient.SqlConnection con = new Microsoft.Data.SqlClient.SqlConnection(connString))
+            using (Microsoft.Data.SqlClient.SqlConnection con = new Microsoft.Data.SqlClient.SqlConnection(connString)) // Usar SqlConnection diretamente
             {
-                con.Open();
-                Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand("SELECT IdUtilizador, Nome FROM Utilizadores WHERE Nome LIKE @termo AND IdUtilizador <> @idLogado", con);
-                cmd.Parameters.AddWithValue("@termo", "%" + termo + "%");
-                cmd.Parameters.AddWithValue("@idLogado", idUtilizadorLogado); // você já tem esse valor
-
-                Microsoft.Data.SqlClient.SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                try
                 {
-                    utilizadores.Items.Add($"{reader["IdUtilizador"]} - {reader["Nome"]}");
+                    con.Open();
+                    Microsoft.Data.SqlClient.SqlCommand cmd = new Microsoft.Data.SqlClient.SqlCommand("SELECT IdUtilizador, Nome FROM Utilizadores WHERE Nome LIKE @termo AND IdUtilizador <> @idLogado", con);
+                    cmd.Parameters.AddWithValue("@termo", "%" + termo + "%");
+                    cmd.Parameters.AddWithValue("@idLogado", idUtilizadorLogado);
+
+                    Microsoft.Data.SqlClient.SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        // Adiciona ItemAmigo para facilitar o acesso ao ID depois
+                        utilizadores.Items.Add(new ItemAmigo
+                        {
+                            Nome = reader["Nome"].ToString(),
+                            Id = (int)reader["IdUtilizador"]
+                        });
+                    }
+                    reader.Close();
+
+                    if (utilizadores.Items.Count == 0)
+                    {
+                        MessageBox.Show("Nenhum utilizador encontrado com este nome.", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao procurar utilizadores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -51,45 +108,68 @@ namespace Litly._02
         {
             if (utilizadores.SelectedItem != null)
             {
-                string item = utilizadores.SelectedItem.ToString();
-                int idDestino = int.Parse(item.Split('-')[0].Trim());
-
-                string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
-                using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn))
+                // Certifica-se de que o item selecionado é do tipo ItemAmigo
+                if (utilizadores.SelectedItem is ItemAmigo utilizadorParaSeguir)
                 {
-                    con.Open();
+                    int idDestino = utilizadorParaSeguir.Id;
 
-                    // Verifica se já existe amizade entre os dois
-                    var check = new Microsoft.Data.SqlClient.SqlCommand("SELECT COUNT(*) FROM Amizades WHERE (IdSolicitante = @a AND IdAceito = @b) OR (IdSolicitante = @b AND IdAceito = @a)", con);
-                    check.Parameters.AddWithValue("@a", idUtilizadorLogado);
-                    check.Parameters.AddWithValue("@b", idDestino);
-                    int existe = (int)check.ExecuteScalar();
-
-                    if (existe == 0)
+                    string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
+                    using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn)) // Usar SqlConnection diretamente
                     {
-                        var cmd = new Microsoft.Data.SqlClient.SqlCommand("INSERT INTO Amizades (IdSolicitante, IdAceito, Status) VALUES (@s, @d, 'Pendente')", con);
-                        cmd.Parameters.AddWithValue("@s", idUtilizadorLogado);
-                        cmd.Parameters.AddWithValue("@d", idDestino);
-                        cmd.ExecuteNonQuery();
+                        try
+                        {
+                            con.Open();
 
-                        MessageBox.Show("Pedido de amizade enviado!");
+                            // Verifica se já existe amizade ou pedido pendente entre os dois
+                            var check = new Microsoft.Data.SqlClient.SqlCommand("SELECT Status FROM Amizades WHERE (IdSolicitante = @a AND IdAceito = @b) OR (IdSolicitante = @b AND IdAceito = @a)", con);
+                            check.Parameters.AddWithValue("@a", idUtilizadorLogado);
+                            check.Parameters.AddWithValue("@b", idDestino);
+                            object result = check.ExecuteScalar();
+
+                            if (result == null) // Não existe amizade ou pedido
+                            {
+                                var cmd = new Microsoft.Data.SqlClient.SqlCommand("INSERT INTO Amizades (IdSolicitante, IdAceito, Status) VALUES (@s, @d, 'Pendente')", con);
+                                cmd.Parameters.AddWithValue("@s", idUtilizadorLogado);
+                                cmd.Parameters.AddWithValue("@d", idDestino);
+                                cmd.ExecuteNonQuery();
+
+                                MessageBox.Show("Pedido de amizade enviado com sucesso!");
+                                CarregarPedidos(); // Atualiza a lista de pedidos para ver se o seu próprio pedido aparece como pendente
+                            }
+                            else
+                            {
+                                string statusExistente = result.ToString();
+                                if (statusExistente == "Pendente")
+                                {
+                                    MessageBox.Show("Já existe um pedido de amizade pendente com este utilizador.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                }
+                                else if (statusExistente == "Aceite")
+                                {
+                                    MessageBox.Show("Você já é amigo deste utilizador.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Erro ao enviar pedido de amizade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                    else
-                    {
-                        MessageBox.Show("Já existe um pedido ou amizade com este utilizador.");
-                    }
+                }
+                else
+                {
+                    MessageBox.Show("Item selecionado inválido. Tente novamente.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                MessageBox.Show("Selecione um utilizador primeiro.");
+                MessageBox.Show("Selecione um utilizador primeiro para enviar o pedido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         private void CarregarPedidos()
         {
             string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
-            using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn))
+            using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn)) // Usar SqlConnection diretamente
             {
                 con.Open();
                 var cmd = new Microsoft.Data.SqlClient.SqlCommand(@"SELECT u.IdUtilizador, u.Nome FROM Amizades a JOIN Utilizadores u ON u.IdUtilizador = a.IdSolicitante WHERE a.IdAceito = @idAceito AND a.Status = 'Pendente'", con);
@@ -100,8 +180,11 @@ namespace Litly._02
                     Pedidos.Items.Clear();
                     while (reader.Read())
                     {
-                        // E aqui, ao ler o dado, também referencie o nome correto da coluna
-                        Pedidos.Items.Add($"{reader["IdUtilizador"]} - {reader["Nome"]}");
+                        Pedidos.Items.Add(new ItemAmigo // Adiciona ItemAmigo para facilitar o aceite/recusa
+                        {
+                            Nome = reader["Nome"].ToString(),
+                            Id = (int)reader["IdUtilizador"]
+                        });
                     }
                 }
             }
@@ -111,21 +194,39 @@ namespace Litly._02
         {
             if (Pedidos.SelectedItem != null)
             {
-                string item = Pedidos.SelectedItem.ToString();
-                int idSolicitante = int.Parse(item.Split('-')[0].Trim());
-
-                string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
-                using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn))
+                if (Pedidos.SelectedItem is ItemAmigo solicitante)
                 {
-                    con.Open();
-                    var cmd = new Microsoft.Data.SqlClient.SqlCommand("UPDATE Amizades SET Status = 'Aceito' WHERE IdSolicitante = @s AND IdAceito = @a", con);
-                    cmd.Parameters.AddWithValue("@s", idSolicitante);
-                    cmd.Parameters.AddWithValue("@a", idUtilizadorLogado);
-                    cmd.ExecuteNonQuery();
+                    int idSolicitante = solicitante.Id;
 
-                    MessageBox.Show("Amizade aceite!");
-                    CarregarPedidos(); // Atualiza lista
+                    string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
+                    using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn)) // Usar SqlConnection diretamente
+                    {
+                        try
+                        {
+                            con.Open();
+                            var cmd = new Microsoft.Data.SqlClient.SqlCommand("UPDATE Amizades SET Status = 'Aceite' WHERE IdSolicitante = @s AND IdAceito = @a", con);
+                            cmd.Parameters.AddWithValue("@s", idSolicitante);
+                            cmd.Parameters.AddWithValue("@a", idUtilizadorLogado);
+                            cmd.ExecuteNonQuery();
+
+                            MessageBox.Show("Amizade aceite com sucesso!");
+                            CarregarPedidos(); // Atualiza a lista de pedidos (para remover o aceite)
+                            CarregarAmigosAceitos(); // Atualiza a lista de amigos aceitos
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Erro ao aceitar amizade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
                 }
+                else
+                {
+                    MessageBox.Show("Item selecionado inválido. Tente novamente.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecione um pedido para aceitar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -133,21 +234,38 @@ namespace Litly._02
         {
             if (Pedidos.SelectedItem != null)
             {
-                string item = Pedidos.SelectedItem.ToString();
-                int idSolicitante = int.Parse(item.Split('-')[0].Trim());
-
-                string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
-                using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn))
+                if (Pedidos.SelectedItem is ItemAmigo solicitante)
                 {
-                    con.Open();
-                    var cmd = new Microsoft.Data.SqlClient.SqlCommand("DELETE FROM Amizades WHERE IdSolicitante = @s AND IdAceito = @a", con);
-                    cmd.Parameters.AddWithValue("@s", idSolicitante);
-                    cmd.Parameters.AddWithValue("@a", idUtilizadorLogado);
-                    cmd.ExecuteNonQuery();
+                    int idSolicitante = solicitante.Id;
 
-                    MessageBox.Show("Pedido recusado.");
-                    CarregarPedidos(); // Atualiza lista
+                    string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
+                    using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn)) // Usar SqlConnection diretamente
+                    {
+                        try
+                        {
+                            con.Open();
+                            var cmd = new Microsoft.Data.SqlClient.SqlCommand("DELETE FROM Amizades WHERE IdSolicitante = @s AND IdAceito = @a", con);
+                            cmd.Parameters.AddWithValue("@s", idSolicitante);
+                            cmd.Parameters.AddWithValue("@a", idUtilizadorLogado);
+                            cmd.ExecuteNonQuery();
+
+                            MessageBox.Show("Pedido recusado com sucesso.");
+                            CarregarPedidos(); // Atualiza a lista de pedidos
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Erro ao recusar pedido: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
                 }
+                else
+                {
+                    MessageBox.Show("Item selecionado inválido. Tente novamente.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecione um pedido para recusar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -155,22 +273,16 @@ namespace Litly._02
         {
 
 
-            CarregarPedidos();
+            //CarregarPedidos();
 
 
         }
 
         private void btnVoltar_Click(object sender, EventArgs e) //  voltar a pagina principal da Litly
         {
-            // Oculta o formulário DetalhesLivros atual
             this.Hide();
-
-            // Cria uma nova instância da PaginaPrincipal, passando o ID do utilizador logado
-            // que está armazenado na classe estática Sessao.
             PaginaPrincipal principal = new PaginaPrincipal(Sessao.IdUtilizador);
-            principal.Show(); // Exibe a PaginaPrincipal
-
-            // Fecha o formulário DetalhesLivros completamente para liberar recursos
+            principal.Show();
             this.Close();
         }
 
@@ -185,41 +297,92 @@ namespace Litly._02
 
             string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
 
-            using (var con = new Microsoft.Data.SqlClient.SqlConnection(connString))
+            using (var con = new Microsoft.Data.SqlClient.SqlConnection(connString)) // Usar SqlConnection diretamente
             {
-                con.Open();
-
-                string sql = @"
-            SELECT u.IdUtilizador, u.Nome
-            FROM Amizades a
-            JOIN Utilizadores u ON 
-                u.IdUtilizador = 
-                    CASE 
-                        WHEN a.IdSolicitante = @IdUtilizadorLogado THEN a.IdAceito
-                        WHEN a.IdAceito = @IdUtilizadorLogado THEN a.IdSolicitante
-                    END
-            WHERE (a.IdSolicitante = @IdUtilizadorLogado OR a.IdAceito = @IdUtilizadorLogado)
-              AND a.Status = 'Aceite'";
-
-                using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
+                try
                 {
-                    cmd.Parameters.AddWithValue("@IdUtilizadorLogado", idUtilizadorLogado);
+                    con.Open();
 
-                    using (var reader = cmd.ExecuteReader())
+                    string sql = @"
+                        SELECT u.IdUtilizador, u.Nome
+                        FROM Amizades a
+                        JOIN Utilizadores u ON
+                            u.IdUtilizador =
+                                CASE
+                                    WHEN a.IdSolicitante = @IdUtilizadorLogado THEN a.IdAceito
+                                    WHEN a.IdAceito = @IdUtilizadorLogado THEN a.IdSolicitante
+                                    ELSE NULL
+                                END
+                        WHERE (a.IdSolicitante = @IdUtilizadorLogado OR a.IdAceito = @IdUtilizadorLogado)
+                          AND a.Status = 'Aceite'";
+
+                    using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con)) // Usar SqlCommand diretamente
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("@IdUtilizadorLogado", idUtilizadorLogado);
+
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            Amigos.Items.Add(new ItemAmigo
+                            while (reader.Read())
                             {
-                                Nome = reader["Nome"].ToString(),
-                                Id = (int)reader["IdUtilizador"]
-                            });
+                                Amigos.Items.Add(new ItemAmigo
+                                {
+                                    Nome = reader["Nome"].ToString(),
+                                    Id = (int)reader["IdUtilizador"]
+                                });
+                            }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao carregar amigos aceites: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
+        private void btnRemover_Click(object sender, EventArgs e)
+        {
+            if (Amigos.SelectedItem is ItemAmigo amigoParaRemover)
+            {
+                DialogResult dialogResult = MessageBox.Show($"Tem certeza que deseja remover {amigoParaRemover.Nome} da sua lista de amigos?", "Confirmar Remoção", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
+                    using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn))
+                    {
+                        try
+                        {
+                            con.Open();
+                            // Remove a amizade independentemente de quem solicitou ou aceitou
+                            string sql = "DELETE FROM Amizades WHERE (IdSolicitante = @idLogado AND IdAceito = @idAmigo) OR (IdSolicitante = @idAmigo AND IdAceito = @idLogado)";
+                            using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
+                            {
+                                cmd.Parameters.AddWithValue("@idLogado", idUtilizadorLogado);
+                                cmd.Parameters.AddWithValue("@idAmigo", amigoParaRemover.Id);
+                                int rowsAffected = cmd.ExecuteNonQuery();
+                                if (rowsAffected > 0)
+                                {
+                                    MessageBox.Show($"{amigoParaRemover.Nome} foi removido da sua lista de amigos.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    CarregarAmigosAceitos(); // Atualiza a lista após a remoção
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Não foi possível remover o amigo.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Erro ao remover amigo: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecione um amigo para remover.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
     }
 
 }

@@ -70,8 +70,16 @@ namespace Litly._02
         // Evento que é chamado quando o botão "Voltar" é clicado
         private void btnVoltar_Click(object sender, EventArgs e)
         {
+            // Oculta o formulário DetalhesLivros atual
+            this.Hide();
+
+            // Cria uma nova instância da PaginaPrincipal, passando o ID do utilizador logado
+            // que está armazenado na classe estática Sessao.
             PaginaPrincipal principal = new PaginaPrincipal(Sessao.IdUtilizador);
-            principal.Show();
+            principal.Show(); // Exibe a PaginaPrincipal
+
+            // Fecha o formulário DetalhesLivros completamente para liberar recursos
+            this.Close();
         }
     }
 }
