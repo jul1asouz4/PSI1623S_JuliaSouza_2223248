@@ -13,16 +13,26 @@ namespace Litly._02
     public partial class FormChat : Form
     {
 
+        // Variáveis de instância (membros da classe)
         int idUtilizadorLogado;
         int idAmigoSelecionado;
 
+        // Apenas a título de organização, mova as conexões para uma variável de classe ou método auxiliar se for repetitiva
+        private string ConnectionString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
 
+
+        // Construtor principal
         public FormChat(int idLogado)
         {
             InitializeComponent();
             idUtilizadorLogado = idLogado;
             CarregarListaAmigos();
-            this.listChats.SelectedIndexChanged += new System.EventHandler(this.listChats_SelectedIndexChanged);
+            // CORRIGIDO: Usar o nome do evento correto ou remover se não for necessário
+            // Se você tiver um evento listChats_SelectedIndexChanged_1 no designer, use ele.
+            // Se você quer que listChats_SelectedIndexChanged(object sender, EventArgs e) seja o manipulador,
+            // então você precisa ter um método com essa assinatura.
+            // Pelo seu código, parece que listChats_SelectedIndexChanged_1 é o que foi gerado.
+            this.listChats.SelectedIndexChanged += new System.EventHandler(this.listChats_SelectedIndexChanged_1);
 
         }
 
@@ -44,8 +54,10 @@ namespace Litly._02
                     break;
                 }
             }
-            CarregarMensagens();   // Carrega as mensagens para este amigo específico
+            CarregarMensagens();    // Carrega as mensagens para este amigo específico (a versão sem parâmetros)
         }
+
+        // Classe aninhada para os itens da lista de amigos
         private class ItemAmigo
         {
             public string Nome { get; set; }
@@ -60,34 +72,26 @@ namespace Litly._02
         private void CarregarListaAmigos()
         {
             listChats.Items.Clear();
-            string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;"; // Certifique-se das barras duplas aqui, como no código.
-
-            using (var con = new Microsoft.Data.SqlClient.SqlConnection(connString))
+            using (var con = new Microsoft.Data.SqlClient.SqlConnection(ConnectionString)) // Usando ConnectionString
             {
                 try
                 {
-
-
-                    // A QUERY CORRIGIDA PARA PEGAR TODOS OS AMIGOS ACEITOS
                     string sql = @"SELECT u.IdUtilizador, u.Nome
-                           FROM Amizades a
-                           JOIN Utilizadores u ON u.IdUtilizador = CASE
-                                                                      WHEN a.IdSolicitante = @IdUtilizadorLogado THEN a.IdAceito
-                                                                      WHEN a.IdAceito = @IdUtilizadorLogado THEN a.IdSolicitante
-                                                                      ELSE NULL
-                                                                  END
-                           WHERE (a.IdSolicitante = @IdUtilizadorLogado OR a.IdAceito = @IdUtilizadorLogado)
-                             AND a.Status = 'Aceite'";
+                               FROM Amizades a
+                               JOIN Utilizadores u ON u.IdUtilizador = CASE
+                                                                        WHEN a.IdSolicitante = @IdUtilizadorLogado THEN a.IdAceito
+                                                                        WHEN a.IdAceito = @IdUtilizadorLogado THEN a.IdSolicitante
+                                                                        ELSE NULL
+                                                                    END
+                               WHERE (a.IdSolicitante = @IdUtilizadorLogado OR a.IdAceito = @IdUtilizadorLogado)
+                                 AND a.Status = 'Aceite'";
 
                     using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
                     {
-                        // Passa o ID do utilizador logado para o parâmetro
                         cmd.Parameters.AddWithValue("@IdUtilizadorLogado", idUtilizadorLogado);
                         con.Open();
-
                         using (var reader = cmd.ExecuteReader())
                         {
-
                             while (reader.Read())
                             {
                                 listChats.Items.Add(new ItemAmigo
@@ -110,18 +114,30 @@ namespace Litly._02
 
         private void GuardarMensagensNoBanco(int idDestinatario, string conteudo)
         {
-            string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
-            using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn))
+            using (var con = new Microsoft.Data.SqlClient.SqlConnection(ConnectionString)) // Usando ConnectionString
             {
-                con.Open();
-                string sql = "INSERT INTO Mensagens (IdRemetente, IdDestinatario, Texto) VALUES (@r, @d, @c)";
-           
-                using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
+                try
                 {
-                    cmd.Parameters.AddWithValue("@r", idUtilizadorLogado);
-                    cmd.Parameters.AddWithValue("@d", idDestinatario);
-                    cmd.Parameters.AddWithValue("@c", conteudo); // <--- O valor para Conteudo vem daqui
-                    cmd.ExecuteNonQuery();
+                    con.Open();
+                    string sql = "INSERT INTO Mensagens (IdRemetente, IdDestinatario, Conteudo, DataEnvio) VALUES (@r, @d, @c, GETDATE())";
+                    using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@r", idUtilizadorLogado);
+                        cmd.Parameters.AddWithValue("@d", idDestinatario);
+                        cmd.Parameters.AddWithValue("@c", conteudo);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao guardar mensagem: " + ex.Message, "Erro de Base de Dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    if (con.State == ConnectionState.Open)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
@@ -131,29 +147,74 @@ namespace Litly._02
         }
 
 
-        private void EnviarMensagem(string mensagem, bool doUsuario)
+        private void EnviarMensagem()
         {
 
-            /*if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(txtMensagem.Text))
+            string mensagem = txtMensagem.Text.Trim();
+
+            if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(mensagem))
             {
                 MessageBox.Show("Selecione um amigo e escreva uma mensagem.");
                 return;
-            }*/
+            }
 
-            GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text); // <--- Chamada aqui
+            // 1. Guardar a mensagem no banco de dados
+            GuardarMensagensNoBanco(idAmigoSelecionado, mensagem);
+
+            // --- INÍCIO DA ATUALIZAÇÃO IMEDIATA DA UI ---
+
+            // 2. Criar e adicionar o balão da mensagem à UI
+            bool enviadoPorMim = true;
+            DateTime dataEnvio = DateTime.Now; // Usamos a hora atual para exibição imediata
+
+            AdicionarMensagemAoPainel(mensagem, dataEnvio, enviadoPorMim);
+
+            // 3. Limpar a caixa de texto de entrada
+            txtMensagem.Clear();
+
+            // 4. (Opcional, mas recomendado) Foco na caixa de texto para digitar a próxima mensagem
+            txtMensagem.Focus();
+
+            // --- FIM DA ATUALIZAÇÃO IMEDIATA DA UI ---
         }
 
 
-        private void CarregarMensagens() // Este método carrega as mensagens para o chat *selecionado*
+        // Este método agora será mais genérico para adicionar uma única mensagem ao FlowLayoutPanel
+        // Tanto CarregarMensagens() quanto EnviarMensagem() poderão usá-lo.
+        private void AdicionarMensagemAoPainel(string conteudo, DateTime data, bool enviadoPorMim)
         {
+            Label msg = new Label();
+            msg.AutoSize = true;
+            msg.MaximumSize = new Size(flowMensagens.Width - 40, 0); // Ajustado para largura do flowMensagens
+            msg.Text = $"{conteudo}\n{data:HH:mm}"; // Formata a data para exibir apenas hora e minuto
+            msg.BackColor = enviadoPorMim ? Color.LightGreen : Color.LightGray;
+            msg.ForeColor = Color.Black;
+            msg.TextAlign = ContentAlignment.MiddleLeft;
+            msg.Padding = new Padding(10);
+            msg.Margin = new Padding(5);
+            msg.BorderStyle = BorderStyle.FixedSingle;
+            msg.Font = new Font("Segoe UI", 9);
+
+            FlowLayoutPanel msgWrapper = new FlowLayoutPanel();
+            msgWrapper.AutoSize = true;
+            msgWrapper.Width = flowMensagens.Width; // Garante que o wrapper ocupa a largura total do pai
+            msgWrapper.FlowDirection = enviadoPorMim ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+            msgWrapper.Controls.Add(msg);
+
+            flowMensagens.Controls.Add(msgWrapper);
+
+            flowMensagens.ScrollControlIntoView(msgWrapper);
+        }
+
+
+            private void CarregarMensagens() // Este método carrega as mensagens para o chat *selecionado*
+            {
             if (idAmigoSelecionado <= 0)
                 return;
 
             flowMensagens.Controls.Clear(); // Limpa mensagens antigas do painel
 
-            string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
-
-            using (var con = new Microsoft.Data.SqlClient.SqlConnection(connString))
+            using (var con = new Microsoft.Data.SqlClient.SqlConnection(ConnectionString)) // Usando ConnectionString
             {
                 con.Open();
                 string query = @"
@@ -174,37 +235,26 @@ namespace Litly._02
                         {
                             bool enviadoPorMim = (int)reader["IdRemetente"] == idUtilizadorLogado;
                             string conteudo = reader["Conteudo"].ToString();
-                            DateTime data = (DateTime)reader["DataEnvio"]; //estava DataHora, mas o correto é DataEnvio
+                            DateTime data = (DateTime)reader["DataEnvio"];
 
-                            Label msg = new Label();
-                            msg.AutoSize = true;
-                            msg.MaximumSize = new Size(300, 0); // largura máxima
-                            msg.Text = $"{conteudo}\n{data:HH:mm}";
-                            msg.BackColor = enviadoPorMim ? Color.LightGreen : Color.LightGray;
-                            msg.TextAlign = ContentAlignment.MiddleLeft;
-                            msg.Padding = new Padding(10);
-                            msg.Margin = new Padding(5);
-
-                            FlowLayoutPanel msgWrapper = new FlowLayoutPanel();
-                            msgWrapper.AutoSize = true;
-                            msgWrapper.Dock = DockStyle.Top;
-                            msgWrapper.FlowDirection = enviadoPorMim ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-                            msgWrapper.Controls.Add(msg);
-
-                            flowMensagens.Controls.Add(msgWrapper);
+                            // Reutiliza o novo método auxiliar para adicionar a mensagem
+                            AdicionarMensagemAoPainel(conteudo, data, enviadoPorMim);
                         }
                     }
                 }
+            }
+            // Após carregar todas as mensagens, garante que a rolagem esteja no final
+            if (flowMensagens.Controls.Count > 0)
+            {
+                flowMensagens.ScrollControlIntoView(flowMensagens.Controls[flowMensagens.Controls.Count - 1]);
             }
         }
 
 
         private void btnEnviar_Click(object sender, EventArgs e)
         {
-
-
-            EnviarMensagem(txtMensagem.Text, true);
-            //GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text);
+            EnviarMensagem();
+      
 
         }
 
@@ -212,8 +262,8 @@ namespace Litly._02
         {
             if (e.KeyCode == Keys.Enter && !e.Shift)
             {
-                e.SuppressKeyPress = true; // Impede quebra de linha
-                EnviarMensagem(txtMensagem.Text, true);
+                e.SuppressKeyPress = true;
+                EnviarMensagem();
             }
         }
 
@@ -278,10 +328,10 @@ namespace Litly._02
 
         private void listChats_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listChats.SelectedItem is ItemAmigo amigo)
+            /*if (listChats.SelectedItem is ItemAmigo amigo)
             {
                 AbrirChatCom(amigo.Id); // Chama AbrirChatCom para carregar as mensagens do amigo selecionado
-            }
+            }*/
         }
 
         private void btnAbrirChat_Click(object sender, EventArgs e)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Litly._02
+namespace Litly._02.Models
 {
     internal class Utilizador : Form
     {

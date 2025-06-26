@@ -30,7 +30,7 @@ namespace Litly._02
             string capaUrl = txtCapaUrl.Text.Trim();
             string sinopse = txtSinopse.Text.Trim();
             DateTime dataPublicacao = dtpDataPublicacao.Value;
-            
+
 
 
             if (string.IsNullOrEmpty(titulo) || string.IsNullOrEmpty(autor))
@@ -150,6 +150,11 @@ namespace Litly._02
             // Fecha o formulário DetalhesLivros (ou o formulário onde este botão está)
             // para liberar recursos.
             this.Close();
+        }
+
+        private void txtCapaUrl_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

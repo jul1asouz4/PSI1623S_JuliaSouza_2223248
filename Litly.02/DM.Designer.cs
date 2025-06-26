@@ -220,10 +220,12 @@
             flowMensagens.BackColor = SystemColors.Info;
             flowMensagens.Controls.Add(lblNomeContato);
             flowMensagens.Dock = DockStyle.Fill;
+            flowMensagens.FlowDirection = FlowDirection.TopDown;
             flowMensagens.Location = new Point(0, 0);
             flowMensagens.Name = "flowMensagens";
             flowMensagens.Size = new Size(882, 561);
             flowMensagens.TabIndex = 1;
+            flowMensagens.WrapContents = false;
             flowMensagens.Paint += flowMensagens_Paint;
             // 
             // lblNomeContato

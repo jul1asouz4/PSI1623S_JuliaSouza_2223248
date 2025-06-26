@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Litly._02;
 using static System.Net.Mime.MediaTypeNames;
+using Litly._02.Models; // Esta linha agora será correta
+using Litly._02.DAL;
 
 namespace Litly._02
 {
