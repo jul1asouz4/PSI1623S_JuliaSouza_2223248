@@ -92,6 +92,8 @@ Litly/
 │
 └── .gitignore (Ficheiro para ignorar itens no controlo de versão)
 
+---
+
 ## 📊 Estrutura da Base de Dados
 
 A base de dados `Litly` utiliza SQL Server e inclui as seguintes tabelas principais para suportar as funcionalidades da aplicação:
@@ -152,6 +154,25 @@ Este projeto está licenciado sob a licença [inserir tipo de licença, e.g., MI
 * [Microsoft Docs](https://learn.microsoft.com)
 * [C# Windows Forms GUI Tutorial - GeeksforGeeks](https://www.geeksforgeeks.org/c-sharp-windows-forms-gui-tutorial/)
 * [SQL Server Basics - W3Schools](https://www.w3schools.com/sql/)
+* Artigo: "Como criar uma rede social com C#" - Medium
+
+
+
+
+
+
+
+
+
+
+
+Vídeo
+
+Deep Research
+
+Canvas
+
+
 * Artigo: "Como criar uma rede social com C#" - Medium
 
 
