@@ -70,14 +70,14 @@ namespace Litly._02
 
                     // A QUERY CORRIGIDA PARA PEGAR TODOS OS AMIGOS ACEITOS
                     string sql = @"SELECT u.IdUtilizador, u.Nome
-                           FROM Amizades a  -- << CORRIGIDO: Nome da tabela para 'Amizade'
+                           FROM Amizades a
                            JOIN Utilizadores u ON u.IdUtilizador = CASE
                                                                       WHEN a.IdSolicitante = @IdUtilizadorLogado THEN a.IdAceito
                                                                       WHEN a.IdAceito = @IdUtilizadorLogado THEN a.IdSolicitante
                                                                       ELSE NULL
                                                                   END
                            WHERE (a.IdSolicitante = @IdUtilizadorLogado OR a.IdAceito = @IdUtilizadorLogado)
-                             AND a.Status = 'Aceite'"; // << Adicionado filtro por Status 'Aceite'
+                             AND a.Status = 'Aceite'";
 
                     using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
                     {
@@ -87,13 +87,6 @@ namespace Litly._02
 
                         using (var reader = cmd.ExecuteReader())
                         {
-                            //listChats.Items.Clear(); // Limpa a lista antes de adicionar novos itens
-
-                            if (!reader.HasRows)
-                            {
-                                // Opcional: Mensagem se não houver amigos
-                                //MessageBox.Show("Você não tem amigos aceitos para conversar.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
 
                             while (reader.Read())
                             {
@@ -121,12 +114,13 @@ namespace Litly._02
             using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn))
             {
                 con.Open();
-                string sql = "INSERT INTO Mensagens (IdRemetente, IdDestinatario, Conteudo) VALUES (@r, @d, @c)";
+                string sql = "INSERT INTO Mensagens (IdRemetente, IdDestinatario, Texto) VALUES (@r, @d, @c)";
+           
                 using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
                 {
                     cmd.Parameters.AddWithValue("@r", idUtilizadorLogado);
                     cmd.Parameters.AddWithValue("@d", idDestinatario);
-                    cmd.Parameters.AddWithValue("@c", conteudo);
+                    cmd.Parameters.AddWithValue("@c", conteudo); // <--- O valor para Conteudo vem daqui
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -139,45 +133,14 @@ namespace Litly._02
 
         private void EnviarMensagem(string mensagem, bool doUsuario)
         {
+
             /*if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(txtMensagem.Text))
             {
                 MessageBox.Show("Selecione um amigo e escreva uma mensagem.");
                 return;
-            }
+            }*/
 
-            string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
-            using (var con = new Microsoft.Data.SqlClient.SqlConnection(connString))
-            {
-                con.Open();
-
-                string query = @"INSERT INTO Mensagens (IdRemetente, IdDestinatario, Conteudo)
-                         VALUES (@rem, @dest, @conteudo)";
-
-                using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@rem", idUtilizadorLogado);
-                    cmd.Parameters.AddWithValue("@dest", idAmigoSelecionado);
-                    cmd.Parameters.AddWithValue("@conteudo", txtMensagem.Text);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-
-            txtMensagem.Clear();
-            CarregarMensagens();*/
-
-            if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(txtMensagem.Text))
-            {
-                MessageBox.Show("Selecione um amigo e escreva uma mensagem.");
-                return;
-            }
-
-            // A lógica de guardar mensagem já está em GuardarMensagensNoBanco,
-            // então não precisamos duplicar a query aqui.
-            GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text);
-
-            txtMensagem.Clear();
-            CarregarMensagens(); // Recarrega as mensagens para mostrar a nova
+            GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text); // <--- Chamada aqui
         }
 
 
@@ -194,7 +157,7 @@ namespace Litly._02
             {
                 con.Open();
                 string query = @"
-            SELECT IdRemetente, Conteudo, DataEnvio -- Alterado de DataHora para DataEnvio
+            SELECT IdRemetente, Conteudo, DataEnvio
             FROM Mensagens
             WHERE (IdRemetente = @id1 AND IdDestinatario = @id2)
                OR (IdRemetente = @id2 AND IdDestinatario = @id1)
@@ -585,6 +548,11 @@ namespace Litly._02
             {
                 MessageBox.Show("Selecione um amigo na lista para ver o perfil.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void flowMensagens_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 
