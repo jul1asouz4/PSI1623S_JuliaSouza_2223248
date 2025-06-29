@@ -92,6 +92,7 @@ Litly/
 │
 └── .gitignore (Ficheiro para ignorar itens no controlo de versão)
 
+```
 ---
 
 ## 📊 Estrutura da Base de Dados
@@ -135,15 +136,6 @@ Para uma visualização da interface e navegação da aplicação, consulte o do
     * Compile o projeto (Build Solution).
     * Execute a aplicação a partir do Visual Studio.
 
-## ✨ Contribuições
-
-Contribuições são bem-vindas! Se tiver sugestões ou quiser melhorar o projeto, sinta-se à vontade para abrir uma *issue* ou enviar um *pull request*.
-
----
-
-## ⚖️ Licença
-
-Este projeto está licenciado sob a licença [inserir tipo de licença, e.g., MIT License]. (Se aplicável)
 
 ---
 
