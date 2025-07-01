@@ -83,10 +83,10 @@ Litly/
 │
 ├── Program.cs (Ponto de entrada da aplicação)
 │   └── (Outros ficheiros do projeto C# como .csproj, .sln, etc.)
-|
+│
 ├── Docs/
 │   └── PSI1623S_ JuliaSouza_2223248_PropostaPreProjeto.pdf (Proposta de pré-projeto com detalhes e protótipos)
-|
+│
 ├── scriptbd/
 │   └── SQLQuery1.sql (Scripts SQL para gestão e alterações da base de dados)
 │
