@@ -28,13 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pictureBox1 = new PictureBox();
-            pictureBox2 = new PictureBox();
-            pictureBox3 = new PictureBox();
             label1 = new Label();
-            label2 = new Label();
-            pictureBox6 = new PictureBox();
-            pictureBox7 = new PictureBox();
             label3 = new Label();
             label4 = new Label();
             label5 = new Label();
@@ -52,101 +46,31 @@
             label9 = new Label();
             txtBrowse = new TextBox();
             btnBrowse = new Button();
-            label12 = new Label();
-            label13 = new Label();
             cmbTipoBusca = new ComboBox();
             listResultados = new ListBox();
             label8 = new Label();
             label7 = new Label();
-            pictureBox8 = new PictureBox();
-            pictureBox4 = new PictureBox();
-            pictureBox5 = new PictureBox();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox7).BeginInit();
+            flowLayoutPanelPosts = new FlowLayoutPanel();
             panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox8).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
+            flowLayoutPanelPosts.SuspendLayout();
             SuspendLayout();
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Image = Properties.Resources._134500f1f3b6719a0672fed13207472c;
-            pictureBox1.Location = new Point(276, 229);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(119, 196);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox1.TabIndex = 3;
-            pictureBox1.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            pictureBox2.Image = Properties.Resources._602966312970a67310826f4a30de98fc;
-            pictureBox2.Location = new Point(480, 229);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(119, 196);
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox2.TabIndex = 4;
-            pictureBox2.TabStop = false;
-            // 
-            // pictureBox3
-            // 
-            pictureBox3.Image = Properties.Resources.cf8b0576d746bb819a547cc4e1c9669a;
-            pictureBox3.Location = new Point(684, 229);
-            pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(119, 196);
-            pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox3.TabIndex = 5;
-            pictureBox3.TabStop = false;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(276, 168);
+            label1.Location = new Point(3, 0);
             label1.Name = "label1";
             label1.Size = new Size(252, 21);
             label1.TabIndex = 8;
             label1.Text = "Livros mais populares da semana.";
             label1.Click += label1_Click;
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(266, 502);
-            label2.Name = "label2";
-            label2.Size = new Size(181, 21);
-            label2.TabIndex = 9;
-            label2.Text = "Publicações da semana.";
-            // 
-            // pictureBox6
-            // 
-            pictureBox6.Image = Properties.Resources._6ec36a9f7d8235be954582e1defb5450;
-            pictureBox6.Location = new Point(258, 559);
-            pictureBox6.Name = "pictureBox6";
-            pictureBox6.Size = new Size(301, 130);
-            pictureBox6.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox6.TabIndex = 10;
-            pictureBox6.TabStop = false;
-            // 
-            // pictureBox7
-            // 
-            pictureBox7.Image = Properties.Resources.c26e33c90ec137102f1230525b64c4f9;
-            pictureBox7.Location = new Point(630, 559);
-            pictureBox7.Name = "pictureBox7";
-            pictureBox7.Size = new Size(301, 130);
-            pictureBox7.TabIndex = 11;
-            pictureBox7.TabStop = false;
-            // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(258, 701);
+            label3.Location = new Point(236, 1221);
             label3.Name = "label3";
             label3.Size = new Size(46, 21);
             label3.TabIndex = 12;
@@ -156,7 +80,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(630, 701);
+            label4.Location = new Point(608, 1221);
             label4.Name = "label4";
             label4.Size = new Size(166, 21);
             label4.TabIndex = 13;
@@ -166,7 +90,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            label5.Location = new Point(266, 722);
+            label5.Location = new Point(244, 1242);
             label5.Name = "label5";
             label5.Size = new Size(211, 21);
             label5.TabIndex = 14;
@@ -176,7 +100,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            label6.Location = new Point(644, 733);
+            label6.Location = new Point(622, 1253);
             label6.Name = "label6";
             label6.Size = new Size(211, 21);
             label6.TabIndex = 15;
@@ -280,7 +204,7 @@
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(212, 796);
+            panel1.Size = new Size(212, 798);
             panel1.TabIndex = 20;
             // 
             // button2
@@ -348,24 +272,6 @@
             btnBrowse.UseVisualStyleBackColor = true;
             btnBrowse.Click += btnBrowse_Click;
             // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(266, 523);
-            label12.Name = "label12";
-            label12.Size = new Size(154, 15);
-            label12.TabIndex = 23;
-            label12.Text = "Crie, compartilhe e conviva.";
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new Point(276, 189);
-            label13.Name = "label13";
-            label13.Size = new Size(173, 15);
-            label13.TabIndex = 24;
-            label13.Text = "De acordo com leitores da Litly.";
-            // 
             // cmbTipoBusca
             // 
             cmbTipoBusca.Font = new Font("Segoe UI", 14.25F);
@@ -389,7 +295,7 @@
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label8.Location = new Point(1023, 722);
+            label8.Location = new Point(1001, 1242);
             label8.Name = "label8";
             label8.Size = new Size(211, 21);
             label8.TabIndex = 18;
@@ -399,95 +305,52 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(1011, 701);
+            label7.Location = new Point(989, 1221);
             label7.Name = "label7";
             label7.Size = new Size(166, 21);
             label7.TabIndex = 17;
             label7.Text = "Melhores livros 2025.";
             // 
-            // pictureBox8
+            // flowLayoutPanelPosts
             // 
-            pictureBox8.Image = Properties.Resources.c26e33c90ec137102f1230525b64c4f9;
-            pictureBox8.Location = new Point(1011, 559);
-            pictureBox8.Name = "pictureBox8";
-            pictureBox8.Size = new Size(301, 130);
-            pictureBox8.TabIndex = 16;
-            pictureBox8.TabStop = false;
-            // 
-            // pictureBox4
-            // 
-            pictureBox4.Image = Properties.Resources.e34c7277aab277e441777fc89b01519d;
-            pictureBox4.Location = new Point(888, 229);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(119, 196);
-            pictureBox4.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox4.TabIndex = 6;
-            pictureBox4.TabStop = false;
-            // 
-            // pictureBox5
-            // 
-            pictureBox5.Image = Properties.Resources.efc6ddc07157be5338531fca3813bc6e;
-            pictureBox5.Location = new Point(1092, 229);
-            pictureBox5.Name = "pictureBox5";
-            pictureBox5.Size = new Size(119, 196);
-            pictureBox5.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox5.TabIndex = 7;
-            pictureBox5.TabStop = false;
+            flowLayoutPanelPosts.AutoScroll = true;
+            flowLayoutPanelPosts.Controls.Add(label1);
+            flowLayoutPanelPosts.Location = new Point(254, 153);
+            flowLayoutPanelPosts.Name = "flowLayoutPanelPosts";
+            flowLayoutPanelPosts.Size = new Size(1036, 572);
+            flowLayoutPanelPosts.TabIndex = 27;
             // 
             // PaginaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Info;
-            ClientSize = new Size(1330, 796);
+            ClientSize = new Size(1330, 798);
             Controls.Add(listResultados);
             Controls.Add(cmbTipoBusca);
-            Controls.Add(label13);
-            Controls.Add(label12);
             Controls.Add(btnBrowse);
             Controls.Add(txtBrowse);
             Controls.Add(panel1);
             Controls.Add(label8);
             Controls.Add(label7);
-            Controls.Add(pictureBox8);
             Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(label4);
             Controls.Add(label3);
-            Controls.Add(pictureBox7);
-            Controls.Add(pictureBox6);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(pictureBox5);
-            Controls.Add(pictureBox4);
-            Controls.Add(pictureBox3);
-            Controls.Add(pictureBox2);
-            Controls.Add(pictureBox1);
+            Controls.Add(flowLayoutPanelPosts);
             Name = "PaginaPrincipal";
             Text = " ";
             Load += PaginaPrincipal_Load;
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox6).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox7).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox8).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
+            flowLayoutPanelPosts.ResumeLayout(false);
+            flowLayoutPanelPosts.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-        private PictureBox pictureBox1;
-        private PictureBox pictureBox2;
-        private PictureBox pictureBox3;
         private Label label1;
-        private Label label2;
-        private PictureBox pictureBox6;
-        private PictureBox pictureBox7;
         private Label label3;
         private Label label4;
         private Label label5;
@@ -504,15 +367,11 @@
         private Label label9;
         private TextBox txtBrowse;
         private Button btnBrowse;
-        private Label label12;
-        private Label label13;
         private ComboBox cmbTipoBusca;
         private ListBox listResultados;
         private Button button2;
         private Label label8;
         private Label label7;
-        private PictureBox pictureBox8;
-        private PictureBox pictureBox4;
-        private PictureBox pictureBox5;
+        private FlowLayoutPanel flowLayoutPanelPosts;
     }
 }

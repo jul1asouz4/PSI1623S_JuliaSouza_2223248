@@ -113,15 +113,32 @@ namespace Litly._02
             string conn = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
             using (var con = new Microsoft.Data.SqlClient.SqlConnection(conn))
             {
-                con.Open();
-                string sql = "INSERT INTO Mensagens (IdRemetente, IdDestinatario, Texto) VALUES (@r, @d, @c)";
-           
-                using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
+                try // Adicionado bloco try-catch para capturar exceções de BD
                 {
-                    cmd.Parameters.AddWithValue("@r", idUtilizadorLogado);
-                    cmd.Parameters.AddWithValue("@d", idDestinatario);
-                    cmd.Parameters.AddWithValue("@c", conteudo); // <--- O valor para Conteudo vem daqui
-                    cmd.ExecuteNonQuery();
+                    con.Open();
+                    // CORRIGIDO: Alterado 'Texto' para 'Conteudo'
+                    string sql = "INSERT INTO Mensagens (IdRemetente, IdDestinatario, Conteudo, DataEnvio) VALUES (@r, @d, @c, GETDATE())";
+                    //                                                      ^^^^^^^^  Adicionei 'DataEnvio' com GETDATE()
+                    using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@r", idUtilizadorLogado);
+                        cmd.Parameters.AddWithValue("@d", idDestinatario);
+                        cmd.Parameters.AddWithValue("@c", conteudo);
+                        // DataEnvio é definida no SQL com GETDATE() para garantir que é registada automaticamente.
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex) // Captura qualquer erro que ocorra durante a operação de BD
+                {
+                    MessageBox.Show("Erro ao guardar mensagem: " + ex.Message, "Erro de Base de Dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    if (con.State == ConnectionState.Open)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
@@ -131,16 +148,18 @@ namespace Litly._02
         }
 
 
-        private void EnviarMensagem(string mensagem, bool doUsuario)
+        private void EnviarMensagem()
         {
 
-            /*if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(txtMensagem.Text))
+            string mensagem = txtMensagem.Text.Trim(); // Remove espaços em branco no início e no final
+
+            if (idAmigoSelecionado <= 0 || string.IsNullOrWhiteSpace(mensagem))
             {
                 MessageBox.Show("Selecione um amigo e escreva uma mensagem.");
                 return;
-            }*/
+            }
 
-            GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text); // <--- Chamada aqui
+            GuardarMensagensNoBanco(idAmigoSelecionado, mensagem); // <--- Chamada aqui
         }
 
 
@@ -202,9 +221,9 @@ namespace Litly._02
         private void btnEnviar_Click(object sender, EventArgs e)
         {
 
-
-            EnviarMensagem(txtMensagem.Text, true);
-            //GuardarMensagensNoBanco(idAmigoSelecionado, txtMensagem.Text);
+            MessageBox.Show("Clique detectado!");
+            EnviarMensagem();
+      
 
         }
 
@@ -212,8 +231,8 @@ namespace Litly._02
         {
             if (e.KeyCode == Keys.Enter && !e.Shift)
             {
-                e.SuppressKeyPress = true; // Impede quebra de linha
-                EnviarMensagem(txtMensagem.Text, true);
+                e.SuppressKeyPress = true;
+                EnviarMensagem();
             }
         }
 

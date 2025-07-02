@@ -45,11 +45,19 @@ namespace Litly._02
                     {
                         if (reader.Read())
                         {
-                            // Atualiza os rótulos do formulário com os dados do banco de dados
                             lblTitulo.Text = reader["Titulo"].ToString();
                             lblAutor.Text = reader["Autor"].ToString();
                             lblSinopse.Text = reader["Sinopse"].ToString();
-                            
+                            // Adicione isso para preencher lblAno
+                            if (reader["DataPublicacao"] != DBNull.Value)
+                            {
+                                DateTime dataPublicacao = Convert.ToDateTime(reader["DataPublicacao"]);
+                                lblAno.Text = dataPublicacao.Year.ToString();
+                            }
+                            else
+                            {
+                                lblAno.Text = "Data não disponível";
+                            }
                         }
                         else
                         {

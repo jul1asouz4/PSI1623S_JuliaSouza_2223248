@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Litly._02;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 
 namespace Litly._02
@@ -35,89 +36,76 @@ namespace Litly._02
             string email = textEmail.Text.Trim();
             string senha = textSenha.Text.Trim();
 
-
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha)) // Usar String.IsNullOrEmpty para melhor prática
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
             {
                 MessageBox.Show("Preencha todos os campos!", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-
             string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
 
-            using (Microsoft.Data.SqlClient.SqlConnection conn = new Microsoft.Data.SqlClient.SqlConnection(connectionString)) // Usar SqlConnection diretamente
+            using (var conn = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
             {
+                conn.Open();
+                var transaction = conn.BeginTransaction();
+
                 try
                 {
-                    conn.Open();
-
-
-                    string checkQuery = "SELECT COUNT(*) FROM Utilizadores WHERE email = @Email";
-                    using (Microsoft.Data.SqlClient.SqlCommand checkCmd = new Microsoft.Data.SqlClient.SqlCommand(checkQuery, conn)) // Usar SqlCommand diretamente
+                    // Verifica se o email já está registado
+                    string checkQuery = "SELECT COUNT(*) FROM Utilizadores WHERE Email = @Email";
+                    using (var checkCmd = new Microsoft.Data.SqlClient.SqlCommand(checkQuery, conn, transaction))
                     {
                         checkCmd.Parameters.AddWithValue("@Email", email);
                         int count = (int)checkCmd.ExecuteScalar();
-
                         if (count > 0)
                         {
                             MessageBox.Show("Este email já está registado.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            transaction.Rollback();
                             return;
                         }
                     }
 
-                    // Insere novo utilizador
-                    string insertQuery = "INSERT INTO Utilizadores (Nome, Email, PalavraPasse) VALUES (@Nome, @Email, @PalavraPasse)";
-                    Microsoft.Data.SqlClient.SqlCommand insertCmd = new Microsoft.Data.SqlClient.SqlCommand(insertQuery, conn); // Usar SqlCommand diretamente
-                    insertCmd.Parameters.AddWithValue("@Nome", nome);
-                    insertCmd.Parameters.AddWithValue("@Email", email);
-                    insertCmd.Parameters.AddWithValue("@PalavraPasse", senha);
+                    // Inserção com OUTPUT
+                    string insertQuery = @"
+                INSERT INTO Utilizadores (Nome, Email, PalavraPasse)
+                OUTPUT INSERTED.IdUtilizador
+                VALUES (@Nome, @Email, @PalavraPasse)";
 
-                    int result = insertCmd.ExecuteNonQuery();
-
-                    if (result > 0)
+                    using (var insertCmd = new Microsoft.Data.SqlClient.SqlCommand(insertQuery, conn, transaction))
                     {
-                        // Agora, obtenha o ID do utilizador recém-criado
-                        string selectIdQuery = "SELECT SCOPE_IDENTITY()"; 
-                        Microsoft.Data.SqlClient.SqlCommand selectIdCmd = new Microsoft.Data.SqlClient.SqlCommand(selectIdQuery, conn); // Usar SqlCommand diretamente
+                        insertCmd.Parameters.AddWithValue("@Nome", nome);
+                        insertCmd.Parameters.AddWithValue("@Email", email);
+                        insertCmd.Parameters.AddWithValue("@PalavraPasse", senha);
 
-                        object resultId = selectIdCmd.ExecuteScalar(); // Obter o resultado como 'object'
+                        object resultId = insertCmd.ExecuteScalar();
 
-                        int novoIdUtilizador;
-
-                        // VERIFICAÇÃO DE DBNULL AQUI:
                         if (resultId != null && resultId != DBNull.Value)
                         {
-                            novoIdUtilizador = Convert.ToInt32(resultId);
+                            int novoIdUtilizador = Convert.ToInt32(resultId);
+                            transaction.Commit();
 
-                            // Opcional: MessageBox.Show("Registo concluído com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information); // Removido para evitar MessageBox extra no fluxo de login/registo
-                            this.Hide();
-
-                            // Define os dados na classe Sessao para o utilizador recém-registrado
+                            // Sessão e redirecionamento
                             Sessao.IdUtilizador = novoIdUtilizador;
                             Sessao.NomeUtilizador = nome;
                             Sessao.EmailUtilizador = email;
-                            Sessao.ImagemPerfil = null; // Ou defina uma imagem padrão
+                            Sessao.ImagemPerfil = null;
 
-                            // Abre a PaginaPrincipal com o ID do NOVO utilizador
-                            PaginaPrincipal principalRe = new PaginaPrincipal(novoIdUtilizador);
-                            principalRe.Show();
-                            this.Close(); // Fecha o formulário de registo após o sucesso
+                            this.Hide();
+                            PaginaPrincipal principal = new PaginaPrincipal(novoIdUtilizador);
+                            principal.Show();
+                            this.Close();
                         }
                         else
                         {
-                            // Lida com o cenário em que SCOPE_IDENTITY() não retornou um valor válido
-                            MessageBox.Show("Erro: Não foi possível obter o ID do utilizador recém-registado. Verifique a configuração da tabela de utilizadores (coluna IdUtilizador deve ser IDENTITY).", "Erro de Registo", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            // Pode optar por não esconder o formulário e permitir que o utilizador tente novamente
+                            transaction.Rollback();
+                            MessageBox.Show("Erro ao obter ID do utilizador.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Erro ao efetuar o registo. Nenhuma linha foi afetada.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Erro: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    try { transaction.Rollback(); } catch { }
+                    MessageBox.Show("Erro inesperado: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
