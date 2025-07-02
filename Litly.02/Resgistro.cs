@@ -77,7 +77,7 @@ namespace Litly._02
                     if (result > 0)
                     {
                         // Agora, obtenha o ID do utilizador recém-criado
-                        string selectIdQuery = "SELECT SCOPE_IDENTITY()";
+                        string selectIdQuery = "SELECT SCOPE_IDENTITY()"; 
                         Microsoft.Data.SqlClient.SqlCommand selectIdCmd = new Microsoft.Data.SqlClient.SqlCommand(selectIdQuery, conn); // Usar SqlCommand diretamente
 
                         object resultId = selectIdCmd.ExecuteScalar(); // Obter o resultado como 'object'

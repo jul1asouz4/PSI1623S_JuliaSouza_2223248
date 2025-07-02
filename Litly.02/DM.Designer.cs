@@ -224,6 +224,7 @@
             flowMensagens.Name = "flowMensagens";
             flowMensagens.Size = new Size(882, 561);
             flowMensagens.TabIndex = 1;
+            flowMensagens.Paint += flowMensagens_Paint;
             // 
             // lblNomeContato
             // 
@@ -276,5 +277,6 @@
         private ListBox listSugestoesAmigos;
         private ListBox listChats;
         private ListBox listBox1;
-    }
+        
+        }
 }
