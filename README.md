@@ -28,6 +28,7 @@ O Litly oferece um conjunto abrangente de funcionalidades para melhorar a experi
 * **Biblioteca Pessoal:**
     * Registo e gestão de livros pessoais na sua biblioteca digital.
     * Adicionar novos livros com título, autor, URL da capa, sinopse e data de publicação.
+    * Visualização detalhada dos livros adicionados.
 * **Publicações Literárias:**
     * Criação e visualização de postagens literárias com título, conteúdo, autor e data de criação.
     * Possibilidade de adicionar imagens às postagens.
@@ -82,17 +83,16 @@ Litly/
 │
 ├── Program.cs (Ponto de entrada da aplicação)
 │   └── (Outros ficheiros do projeto C# como .csproj, .sln, etc.)
-│
+|
 ├── Docs/
 │   └── PSI1623S_ JuliaSouza_2223248_PropostaPreProjeto.pdf (Proposta de pré-projeto com detalhes e protótipos)
-│
+|
 ├── scriptbd/
 │   └── SQLQuery1.sql (Scripts SQL para gestão e alterações da base de dados)
 │
 └── .gitignore (Ficheiro para ignorar itens no controlo de versão)
 
 ```
----
 
 ## 📊 Estrutura da Base de Dados
 
@@ -136,7 +136,6 @@ Para uma visualização da interface e navegação da aplicação, consulte o do
     * Execute a aplicação a partir do Visual Studio.
 
 
----
 
 ## 🔗 Referências
 
