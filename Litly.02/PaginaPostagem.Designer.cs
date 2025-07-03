@@ -51,81 +51,86 @@
             // 
             IblTitulo.AutoSize = true;
             IblTitulo.BackColor = Color.Cornsilk;
-            IblTitulo.Location = new Point(116, 68);
+            IblTitulo.Location = new Point(133, 91);
             IblTitulo.Name = "IblTitulo";
-            IblTitulo.Size = new Size(38, 15);
+            IblTitulo.Size = new Size(47, 20);
             IblTitulo.TabIndex = 0;
             IblTitulo.Text = "Titulo";
             // 
             // txtTitulo
             // 
-            txtTitulo.Location = new Point(170, 60);
+            txtTitulo.Location = new Point(194, 80);
+            txtTitulo.Margin = new Padding(3, 4, 3, 4);
             txtTitulo.Name = "txtTitulo";
             txtTitulo.ReadOnly = true;
-            txtTitulo.Size = new Size(100, 23);
+            txtTitulo.Size = new Size(114, 27);
             txtTitulo.TabIndex = 1;
             // 
             // IblConteudo
             // 
             IblConteudo.AutoSize = true;
             IblConteudo.BackColor = Color.Cornsilk;
-            IblConteudo.Location = new Point(369, 73);
+            IblConteudo.Location = new Point(422, 97);
             IblConteudo.Name = "IblConteudo";
-            IblConteudo.Size = new Size(60, 15);
+            IblConteudo.Size = new Size(74, 20);
             IblConteudo.TabIndex = 2;
             IblConteudo.Text = "Conteúdo";
             // 
             // txtConteudo
             // 
-            txtConteudo.Location = new Point(442, 65);
+            txtConteudo.Location = new Point(505, 87);
+            txtConteudo.Margin = new Padding(3, 4, 3, 4);
             txtConteudo.Multiline = true;
             txtConteudo.Name = "txtConteudo";
             txtConteudo.ReadOnly = true;
             txtConteudo.ScrollBars = ScrollBars.Vertical;
-            txtConteudo.Size = new Size(100, 23);
+            txtConteudo.Size = new Size(114, 29);
             txtConteudo.TabIndex = 3;
             // 
             // IblAutor
             // 
             IblAutor.AutoSize = true;
             IblAutor.BackColor = Color.Cornsilk;
-            IblAutor.Location = new Point(116, 120);
+            IblAutor.Location = new Point(133, 160);
             IblAutor.Name = "IblAutor";
-            IblAutor.Size = new Size(37, 15);
+            IblAutor.Size = new Size(46, 20);
             IblAutor.TabIndex = 4;
             IblAutor.Text = "Autor";
             // 
             // txtAutor
             // 
-            txtAutor.Location = new Point(170, 112);
+            txtAutor.Location = new Point(194, 149);
+            txtAutor.Margin = new Padding(3, 4, 3, 4);
             txtAutor.Name = "txtAutor";
             txtAutor.ReadOnly = true;
-            txtAutor.Size = new Size(100, 23);
+            txtAutor.Size = new Size(114, 27);
             txtAutor.TabIndex = 5;
             // 
             // IblData
             // 
             IblData.AutoSize = true;
             IblData.BackColor = Color.Cornsilk;
-            IblData.Location = new Point(346, 125);
+            IblData.Location = new Point(395, 167);
             IblData.Name = "IblData";
-            IblData.Size = new Size(90, 15);
+            IblData.Size = new Size(116, 20);
             IblData.TabIndex = 6;
             IblData.Text = "Data de Criação";
             // 
             // txtData
             // 
-            txtData.Location = new Point(442, 117);
+            txtData.Location = new Point(505, 156);
+            txtData.Margin = new Padding(3, 4, 3, 4);
             txtData.Name = "txtData";
             txtData.ReadOnly = true;
-            txtData.Size = new Size(100, 23);
+            txtData.Size = new Size(114, 27);
             txtData.TabIndex = 7;
             // 
             // btnPublicar
             // 
-            btnPublicar.Location = new Point(244, 342);
+            btnPublicar.Location = new Point(279, 456);
+            btnPublicar.Margin = new Padding(3, 4, 3, 4);
             btnPublicar.Name = "btnPublicar";
-            btnPublicar.Size = new Size(156, 46);
+            btnPublicar.Size = new Size(178, 61);
             btnPublicar.TabIndex = 8;
             btnPublicar.Text = "Publicar";
             btnPublicar.UseVisualStyleBackColor = true;
@@ -136,9 +141,9 @@
             label5.AutoSize = true;
             label5.BackColor = Color.Cornsilk;
             label5.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(227, 15);
+            label5.Location = new Point(259, 20);
             label5.Name = "label5";
-            label5.Size = new Size(202, 25);
+            label5.Size = new Size(257, 32);
             label5.TabIndex = 9;
             label5.Text = "Detalhes da Postagem";
             // 
@@ -158,18 +163,20 @@
             panel1.Controls.Add(txtAutor);
             panel1.Controls.Add(txtConteudo);
             panel1.Controls.Add(IblAutor);
-            panel1.Location = new Point(52, 28);
+            panel1.Location = new Point(59, 37);
+            panel1.Margin = new Padding(3, 4, 3, 4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(668, 402);
+            panel1.Size = new Size(763, 536);
             panel1.TabIndex = 10;
             panel1.Paint += panel1_Paint;
             // 
             // btnRemoverImagem
             // 
             btnRemoverImagem.BackColor = Color.FromArgb(255, 111, 97);
-            btnRemoverImagem.Location = new Point(325, 293);
+            btnRemoverImagem.Location = new Point(371, 391);
+            btnRemoverImagem.Margin = new Padding(3, 4, 3, 4);
             btnRemoverImagem.Name = "btnRemoverImagem";
-            btnRemoverImagem.Size = new Size(75, 23);
+            btnRemoverImagem.Size = new Size(86, 31);
             btnRemoverImagem.TabIndex = 12;
             btnRemoverImagem.Text = "Remover";
             btnRemoverImagem.UseVisualStyleBackColor = false;
@@ -178,9 +185,10 @@
             // btnSelecionarImagem
             // 
             btnSelecionarImagem.BackColor = Color.PaleGreen;
-            btnSelecionarImagem.Location = new Point(244, 293);
+            btnSelecionarImagem.Location = new Point(279, 391);
+            btnSelecionarImagem.Margin = new Padding(3, 4, 3, 4);
             btnSelecionarImagem.Name = "btnSelecionarImagem";
-            btnSelecionarImagem.Size = new Size(75, 23);
+            btnSelecionarImagem.Size = new Size(86, 31);
             btnSelecionarImagem.TabIndex = 11;
             btnSelecionarImagem.Text = "Adicionar";
             btnSelecionarImagem.UseVisualStyleBackColor = false;
@@ -188,18 +196,19 @@
             // 
             // pictureBoxPostagem
             // 
-            pictureBoxPostagem.Location = new Point(244, 172);
+            pictureBoxPostagem.Location = new Point(279, 229);
+            pictureBoxPostagem.Margin = new Padding(3, 4, 3, 4);
             pictureBoxPostagem.Name = "pictureBoxPostagem";
-            pictureBoxPostagem.Size = new Size(156, 115);
+            pictureBoxPostagem.Size = new Size(178, 153);
+            pictureBoxPostagem.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxPostagem.TabIndex = 10;
             pictureBoxPostagem.TabStop = false;
             // 
             // btnVoltar
             // 
-            btnVoltar.Location = new Point(553, 435);
-            btnVoltar.Margin = new Padding(3, 2, 3, 2);
+            btnVoltar.Location = new Point(632, 580);
             btnVoltar.Name = "btnVoltar";
-            btnVoltar.Size = new Size(111, 22);
+            btnVoltar.Size = new Size(127, 29);
             btnVoltar.TabIndex = 11;
             btnVoltar.Text = "Voltar ";
             btnVoltar.UseVisualStyleBackColor = true;
@@ -207,12 +216,13 @@
             // 
             // PaginaPostagem
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSteelBlue;
-            ClientSize = new Size(800, 472);
+            ClientSize = new Size(914, 629);
             Controls.Add(btnVoltar);
             Controls.Add(panel1);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "PaginaPostagem";
             Text = "PaginaPostagem";
             Load += PaginaPostagem_Load;

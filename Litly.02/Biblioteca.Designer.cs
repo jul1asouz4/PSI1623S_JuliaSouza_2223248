@@ -41,10 +41,10 @@
             // listBoxLivros
             // 
             listBoxLivros.FormattingEnabled = true;
-            listBoxLivros.ItemHeight = 15;
-            listBoxLivros.Location = new Point(122, 95);
+            listBoxLivros.Location = new Point(139, 127);
+            listBoxLivros.Margin = new Padding(3, 4, 3, 4);
             listBoxLivros.Name = "listBoxLivros";
-            listBoxLivros.Size = new Size(557, 274);
+            listBoxLivros.Size = new Size(636, 364);
             listBoxLivros.TabIndex = 0;
             listBoxLivros.SelectedIndexChanged += listBoxLivros_SelectedIndexChanged;
             // 
@@ -58,9 +58,10 @@
             // 
             // buttonAdicionar
             // 
-            buttonAdicionar.Location = new Point(522, 398);
+            buttonAdicionar.Location = new Point(597, 531);
+            buttonAdicionar.Margin = new Padding(3, 4, 3, 4);
             buttonAdicionar.Name = "buttonAdicionar";
-            buttonAdicionar.Size = new Size(157, 22);
+            buttonAdicionar.Size = new Size(179, 29);
             buttonAdicionar.TabIndex = 1;
             buttonAdicionar.Text = "Adicionar livros";
             buttonAdicionar.UseVisualStyleBackColor = true;
@@ -68,9 +69,10 @@
             // 
             // btnVoltar
             // 
-            btnVoltar.Location = new Point(122, 398);
+            btnVoltar.Location = new Point(139, 531);
+            btnVoltar.Margin = new Padding(3, 4, 3, 4);
             btnVoltar.Name = "btnVoltar";
-            btnVoltar.Size = new Size(157, 22);
+            btnVoltar.Size = new Size(179, 29);
             btnVoltar.TabIndex = 2;
             btnVoltar.Text = "Voltar a pagina principal\r\n";
             btnVoltar.UseVisualStyleBackColor = true;
@@ -78,13 +80,14 @@
             // 
             // Biblioteca
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Info;
-            ClientSize = new Size(835, 471);
+            ClientSize = new Size(954, 628);
             Controls.Add(btnVoltar);
             Controls.Add(buttonAdicionar);
             Controls.Add(listBoxLivros);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "Biblioteca";
             Text = "Biblioteca";
             Load += Biblioteca_Load;

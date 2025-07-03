@@ -89,14 +89,16 @@ namespace Litly._02
         {
             Resgistro resgisto = new Resgistro();
             resgisto.Show();
-            
+            this.Hide();
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             Resgistro resgisto = new Resgistro();
             resgisto.Show();
-          
+            this.Hide();
+
         }
 
         private void linkLabel1_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)

@@ -37,7 +37,7 @@ namespace Litly._02
                 // Usa o ID da sessão atual (talvez seja melhor usar idUtilizadorLogado aqui para consistência)
                 cmd.Parameters.AddWithValue("@IdUtilizador", Sessao.IdUtilizador);
 
-                var reader = cmd.ExecuteReader(); 
+                var reader = cmd.ExecuteReader();
                 listBoxLivros.Items.Clear(); // Limpa a lista antes de preencher novamente
 
                 while (reader.Read())
@@ -54,7 +54,7 @@ namespace Litly._02
 
         public void listBoxLivros_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
 
             string connString = "Server=(localdb)\\MSSQLLocalDB;Database=Litly;Trusted_Connection=True;";
 
@@ -124,6 +124,11 @@ namespace Litly._02
 
             // Fecha o formulário DetalhesLivros completamente para liberar recursos
             this.Close();
+        }
+
+        private void btnExcluirLivro_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

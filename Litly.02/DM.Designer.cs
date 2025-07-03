@@ -191,6 +191,7 @@
             picPerfil.Margin = new Padding(3, 4, 3, 4);
             picPerfil.Name = "picPerfil";
             picPerfil.Size = new Size(135, 143);
+            picPerfil.SizeMode = PictureBoxSizeMode.Zoom;
             picPerfil.TabIndex = 0;
             picPerfil.TabStop = false;
             // 
