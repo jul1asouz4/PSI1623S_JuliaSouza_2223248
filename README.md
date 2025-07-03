@@ -28,7 +28,6 @@ O Litly oferece um conjunto abrangente de funcionalidades para melhorar a experi
 * **Biblioteca Pessoal:**
     * Registo e gestão de livros pessoais na sua biblioteca digital.
     * Adicionar novos livros com título, autor, URL da capa, sinopse e data de publicação.
-    * Visualização detalhada dos livros adicionados.
 * **Publicações Literárias:**
     * Criação e visualização de postagens literárias com título, conteúdo, autor e data de criação.
     * Possibilidade de adicionar imagens às postagens.
